@@ -1,11 +1,10 @@
 import {Component} from '@nova-engine/ecs'
+import {Vector3} from 'three'
 
 class PositionComponent implements Component {
     public name = 'Position Component'
 
-    public x = 0
-    public y = 0
-    public z = 0
+    public position: Vector3 = new Vector3()
 }
 
 export {PositionComponent}
