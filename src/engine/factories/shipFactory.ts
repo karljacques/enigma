@@ -12,7 +12,7 @@ class ShipFactory {
         ship.putComponent(RenderComponent)
         ship.putComponent(VelocityComponent)
 
-        const geometry = new THREE.BoxGeometry(1, 1, 1)
+        const geometry = new THREE.ConeGeometry(0.25, 1, 32)
         const material = new THREE.MeshBasicMaterial({color: 0x00ff00})
         ship.getComponent(RenderComponent).mesh = new THREE.Mesh(geometry, material)
 
