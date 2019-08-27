@@ -2,9 +2,14 @@ import {Star} from '@/engine/entities/star'
 import {PositionComponent} from '@/engine/components/positionComponent'
 import {Mesh, RepeatWrapping, ShaderMaterial, SphereGeometry, TextureLoader, Vector2, Vector3} from 'three'
 import {StarRenderComponent} from '@/engine/components/starRenderComponent'
+import {Renderer} from '@/engine/renderer'
+import {Engine} from '@nova-engine/ecs'
 
 class StarFactory {
-    public static createStar(size: number): Star {
+    public constructor(protected renderer: Renderer, protected engine: Engine) {
+    }
+
+    public createStar(size: number): Star {
         const vertexElement = document.getElementById('vertexShader')
         if (!vertexElement) {
             throw new Error('Could not locate vertexShader')
@@ -49,7 +54,9 @@ class StarFactory {
         })
 
         renderComponent.mesh = new Mesh(new SphereGeometry(size, 30, 30, 1), material)
-        // renderComponent.mesh.rotation.x = 0.3
+        this.renderer.getStarScene().add(renderComponent.getMesh())
+        this.engine.addEntity(entity)
+
         return entity
     }
 }

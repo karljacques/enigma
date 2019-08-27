@@ -36,28 +36,20 @@
             this.engine = new Engine()
             this.renderer = new Renderer(element)
 
-            const animate = () => {
-                requestAnimationFrame(animate)
-
-                this.engine.update(16)
-
-                // uniforms['time'].value += 0.2 * 0.05
-            }
-
-
             this.engine.addSystem(this.renderer)
             this.engine.addSystem(new VelocityApplicationSystem())
-            const ship = ShipFactory.createShip()
+
+            const shipFactory = new ShipFactory(this.renderer, this.engine)
+            const ship = shipFactory.createShip()
             ship.getComponent(PositionComponent).position = new Vector3(1, 1, 1)
             ship.getComponent(VelocityComponent).velocity = new Vector3(0.01, 0.01, 0.01)
-            this.engine.addEntity(ship)
 
-            this.renderer.getScene().add(ship.getComponent(RenderComponent).getMesh())
-            const star = StarFactory.createStar(2)
-            this.engine.addEntity(star)
+            const star = (new StarFactory(this.renderer, this.engine)).createStar(2)
 
-            this.renderer.getStarScene().add(star.getComponent(RenderComponent).getMesh())
-
+            const animate = () => {
+                requestAnimationFrame(animate)
+                this.engine.update(16)
+            }
             animate()
         }
     }
