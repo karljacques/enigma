@@ -15,8 +15,7 @@
     import {PositionComponent} from '@/engine/components/positionComponent'
     import ShaderLoader from '@/components/shaders/ShaderLoader.vue'
     import {StarFactory} from '@/engine/factories/starFactory'
-    import {Vector3} from 'three'
-    import {RenderComponent} from '@/engine/components/renderComponent'
+    import {Clock, Vector3} from 'three'
     import {VelocityComponent} from '@/engine/components/velocityComponent'
 
     @Component({
@@ -46,9 +45,11 @@
 
             const star = (new StarFactory(this.renderer, this.engine)).createStar(2)
 
+            const clock = new Clock;
             const animate = () => {
+
+                this.engine.update(clock.getDelta())
                 requestAnimationFrame(animate)
-                this.engine.update(16)
             }
             animate()
         }

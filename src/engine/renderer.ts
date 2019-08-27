@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import {Camera, PerspectiveCamera, Scene, WebGLRenderer} from 'three'
+import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three'
 import {Engine, FamilyBuilder, System, Family, Entity} from '@nova-engine/ecs'
 import {RenderComponent} from '@/engine/components/renderComponent'
 import {PositionComponent} from '@/engine/components/positionComponent'
@@ -10,6 +10,7 @@ import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass'
 import {CopyShader} from 'three/examples/jsm/shaders/CopyShader'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
 class Renderer extends System {
     protected camera: PerspectiveCamera
@@ -22,6 +23,7 @@ class Renderer extends System {
     protected family?: Family
 
     protected composer: EffectComposer
+    protected controls: any;
 
     constructor(mountElement: Element) {
         super()
@@ -29,9 +31,12 @@ class Renderer extends System {
         this.scene = new Scene()
         this.starScene = new Scene()
 
-        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000)
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000)
+        this.camera.position.set(0.5, 2, 5)
+        this.camera.lookAt(new Vector3(0, 1, 0))
 
         this.renderer = new WebGLRenderer()
+        this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.autoClear = false
 
@@ -66,7 +71,9 @@ class Renderer extends System {
         this.composer.addPass(renderRegular)
         this.composer.addPass(outputPass)
 
-        this.camera.position.z = 5
+        this.controls = new OrbitControls(this.camera)
+
+
     }
 
     public onAttach(engine: Engine): void {
@@ -102,7 +109,7 @@ class Renderer extends System {
                 renderComponent.update(delta)
 
             }
-
+            this.controls.update()
             this.composer.render(delta)
         }
     }
