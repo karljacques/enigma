@@ -15,8 +15,9 @@
     import {PositionComponent} from '@/engine/components/positionComponent'
     import ShaderLoader from '@/components/shaders/ShaderLoader.vue'
     import {StarFactory} from '@/engine/factories/starFactory'
-    import {Clock, Vector3} from 'three'
+    import {Clock, Line, LineBasicMaterial, Vector3} from 'three'
     import {VelocityComponent} from '@/engine/components/velocityComponent'
+    import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory'
 
     @Component({
         components: {ShaderLoader}
@@ -45,7 +46,15 @@
 
             const star = (new StarFactory(this.renderer, this.engine)).createStar(2)
 
-            const clock = new Clock;
+            const circleFactory = new CircleGeometryFactory()
+
+            ;[25, 50, 75, 125].forEach((radius: number) => {
+                const geo = circleFactory.createCircleGeometry(radius, 100)
+                this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})))
+            })
+
+
+            const clock = new Clock
             const animate = () => {
 
                 this.engine.update(clock.getDelta())

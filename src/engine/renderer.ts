@@ -1,9 +1,8 @@
 import * as THREE from 'three'
 import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three'
-import {Engine, FamilyBuilder, System, Family, Entity} from '@nova-engine/ecs'
+import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs'
 import {RenderComponent} from '@/engine/components/renderComponent'
 import {PositionComponent} from '@/engine/components/positionComponent'
-import {Pass} from 'three/examples/jsm/postprocessing/Pass'
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer'
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass'
 import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass'
@@ -23,7 +22,7 @@ class Renderer extends System {
     protected family?: Family
 
     protected composer: EffectComposer
-    protected controls: any;
+    protected controls: any
 
     constructor(mountElement: Element) {
         super()
@@ -36,7 +35,7 @@ class Renderer extends System {
         this.camera.lookAt(new Vector3(0, 1, 0))
 
         this.renderer = new WebGLRenderer()
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.autoClear = false
 
@@ -72,7 +71,8 @@ class Renderer extends System {
         this.composer.addPass(outputPass)
 
         this.controls = new OrbitControls(this.camera)
-
+        this.controls.enableDamping = true
+        this.controls.rotateSpeed = 0.1
 
     }
 
@@ -109,9 +109,10 @@ class Renderer extends System {
                 renderComponent.update(delta)
 
             }
-            this.controls.update()
-            this.composer.render(delta)
         }
+
+        this.controls.update()
+        this.composer.render(delta)
     }
 
 
