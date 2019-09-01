@@ -16,9 +16,6 @@ class CameraControlSystem extends System {
     protected moveRightPressed: boolean = false;
 
     protected velocity: Vector3 = new Vector3(0, 0, 0);
-    protected zoomVelocity: number = 0.0;
-
-    protected readonly MAX_ZOOM_SPEED = 50.0;
 
     constructor(protected camera: Camera) {
         super();
@@ -111,8 +108,6 @@ class CameraControlSystem extends System {
                 break;
         }
     }
-
-
 }
 
 export {CameraControlSystem};
