@@ -23,7 +23,7 @@ class CameraControlSystem extends System {
     }
 
     protected onMouseWheel(event: WheelEvent): void {
-        this.camera.position.copy(this.camera.position.lerp(this.intersect, 0.001 * -event.deltaY))
+        this.camera.position.lerp(this.intersect, 0.001 * -event.deltaY)
     }
 
     protected onMouseMove(event: MouseEvent): void {
