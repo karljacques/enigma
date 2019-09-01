@@ -9,7 +9,6 @@ import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass'
 import {CopyShader} from 'three/examples/jsm/shaders/CopyShader'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
 class Renderer extends System {
     protected camera: PerspectiveCamera
@@ -22,7 +21,6 @@ class Renderer extends System {
     protected family?: Family
 
     protected composer: EffectComposer
-    protected controls: any
 
     constructor(mountElement: Element) {
         super()
@@ -31,7 +29,7 @@ class Renderer extends System {
         this.starScene = new Scene()
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000)
-        this.camera.position.set(0.5, 2, 5)
+        this.camera.position.set(0.5, 20, 5)
         this.camera.lookAt(new Vector3(0, 1, 0))
 
         this.renderer = new WebGLRenderer()
@@ -69,11 +67,6 @@ class Renderer extends System {
         this.composer.addPass(effectBloom)
         this.composer.addPass(renderRegular)
         this.composer.addPass(outputPass)
-
-        this.controls = new OrbitControls(this.camera)
-        this.controls.enableDamping = true
-        this.controls.rotateSpeed = 0.1
-
     }
 
     public onAttach(engine: Engine): void {
@@ -111,7 +104,6 @@ class Renderer extends System {
             }
         }
 
-        this.controls.update()
         this.composer.render(delta)
     }
 

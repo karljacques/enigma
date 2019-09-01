@@ -18,6 +18,7 @@
     import {Clock, Line, LineBasicMaterial, Vector3} from 'three'
     import {VelocityComponent} from '@/engine/components/velocityComponent'
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory'
+    import {CameraControlSystem} from '@/engine/systems/cameraControlSystem'
 
     @Component({
         components: {ShaderLoader}
@@ -42,9 +43,9 @@
             const shipFactory = new ShipFactory(this.renderer, this.engine)
             const ship = shipFactory.createShip()
             ship.getComponent(PositionComponent).position = new Vector3(1, 1, 1)
-            ship.getComponent(VelocityComponent).velocity = new Vector3(0.01, 0.01, 0.01)
+            ship.getComponent(VelocityComponent).velocity = new Vector3(0.00, 0.01, 0.00);
 
-            const star = (new StarFactory(this.renderer, this.engine)).createStar(2)
+            (new StarFactory(this.renderer, this.engine)).createStar(2)
 
             const circleFactory = new CircleGeometryFactory()
 
@@ -53,6 +54,8 @@
                 this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})))
             })
 
+            const cameraControl = new CameraControlSystem(this.renderer.getCamera())
+            this.engine.addSystem(cameraControl)
 
             const clock = new Clock
             const animate = () => {
