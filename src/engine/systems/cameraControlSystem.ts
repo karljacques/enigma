@@ -16,7 +16,9 @@ class CameraControlSystem extends System {
     protected moveRightPressed: boolean = false;
 
     protected velocity: Vector3 = new Vector3(0, 0, 0);
-    
+    protected zoomVelocity: number = 0.0;
+
+    protected readonly MAX_ZOOM_SPEED = 50.0;
 
     constructor(protected camera: Camera) {
         super();
@@ -69,11 +71,22 @@ class CameraControlSystem extends System {
         this.raycaster.setFromCamera(this.mouse, this.camera);
         this.raycaster.ray.intersectPlane(this.plane, this.intersect);
 
+        this.camera.position.lerp(this.intersect, 0.001 * this.zoomVelocity);
+
         this.velocity.lerp(new Vector3(0, 0, 0), delta * 3);
+        this.zoomVelocity = this.lerp(this.zoomVelocity, 0, delta * 3);
+    }
+
+    protected lerp(start: number, end: number, amt: number): number {
+        return (1 - amt) * start + amt * end;
     }
 
     protected onMouseWheel(event: WheelEvent): void {
-        this.camera.position.lerp(this.intersect, 0.001 * -event.deltaY);
+        this.zoomVelocity -= event.deltaY / 10.0;
+
+        if (Math.abs(this.zoomVelocity) > this.MAX_ZOOM_SPEED) {
+            this.zoomVelocity = this.MAX_ZOOM_SPEED * ((this.zoomVelocity > 0) ? 1 : -1);
+        }
     }
 
     protected onMouseMove(event: MouseEvent): void {
