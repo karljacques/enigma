@@ -1,113 +1,113 @@
-import * as THREE from 'three'
-import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three'
-import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs'
-import {RenderComponent} from '@/engine/components/renderComponent'
-import {PositionComponent} from '@/engine/components/positionComponent'
-import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer'
-import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass'
-import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass'
-import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass'
-import {CopyShader} from 'three/examples/jsm/shaders/CopyShader'
-import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import * as THREE from 'three';
+import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three';
+import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
+import {RenderComponent} from '@/engine/components/renderComponent';
+import {PositionComponent} from '@/engine/components/positionComponent';
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
+import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass';
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
+import {CopyShader} from 'three/examples/jsm/shaders/CopyShader';
+import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 
 class Renderer extends System {
-    protected camera: PerspectiveCamera
+    protected camera: PerspectiveCamera;
 
-    protected scene: Scene
-    protected starScene: Scene
+    protected scene: Scene;
+    protected starScene: Scene;
 
-    protected renderer: WebGLRenderer
+    protected renderer: WebGLRenderer;
 
-    protected family?: Family
+    protected family?: Family;
 
-    protected composer: EffectComposer
+    protected composer: EffectComposer;
 
     constructor(mountElement: Element) {
-        super()
+        super();
 
-        this.scene = new Scene()
-        this.starScene = new Scene()
+        this.scene = new Scene();
+        this.starScene = new Scene();
 
-        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000)
-        this.camera.position.set(0.5, 20, 20)
-        this.camera.lookAt(new Vector3(0, 1, 0))
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        this.camera.position.set(0.5, 20, 20);
+        this.camera.lookAt(new Vector3(0, 1, 0));
 
-        this.renderer = new WebGLRenderer()
-        this.renderer.setPixelRatio(window.devicePixelRatio)
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
-        this.renderer.autoClear = false
+        this.renderer = new WebGLRenderer();
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.autoClear = false;
 
-        this.composer = new EffectComposer(this.renderer)
+        this.composer = new EffectComposer(this.renderer);
 
-        mountElement.appendChild(this.renderer.domElement)
+        mountElement.appendChild(this.renderer.domElement);
 
-        const renderRegular = new RenderPass(this.scene, this.camera)
-        renderRegular.clear = false
+        const renderRegular = new RenderPass(this.scene, this.camera);
+        renderRegular.clear = false;
 
-        const renderModel = new RenderPass(this.starScene, this.camera)
-        renderModel.clear = false
+        const renderModel = new RenderPass(this.starScene, this.camera);
+        renderModel.clear = false;
 
         const effectBloom = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5, 0.4, 0.85)
+            1.5, 0.4, 0.85);
 
-        effectBloom.threshold = 0
-        effectBloom.strength = 2
-        effectBloom.radius = 1
+        effectBloom.threshold = 0;
+        effectBloom.strength = 2;
+        effectBloom.radius = 1;
 
 
-        const outputPass = new ShaderPass(CopyShader)
-        outputPass.renderToScreen = true
+        const outputPass = new ShaderPass(CopyShader);
+        outputPass.renderToScreen = true;
 
-        const clearPass = new ClearPass()
+        const clearPass = new ClearPass();
 
-        this.composer.addPass(clearPass)
-        this.composer.addPass(renderModel)
+        this.composer.addPass(clearPass);
+        this.composer.addPass(renderModel);
 
-        this.composer.addPass(effectBloom)
-        this.composer.addPass(renderRegular)
-        this.composer.addPass(outputPass)
+        this.composer.addPass(effectBloom);
+        this.composer.addPass(renderRegular);
+        this.composer.addPass(outputPass);
     }
 
     public onAttach(engine: Engine): void {
-        super.onAttach(engine)
+        super.onAttach(engine);
 
-        this.family = new FamilyBuilder(engine).include(RenderComponent).build()
+        this.family = new FamilyBuilder(engine).include(RenderComponent).build();
     }
 
     public getCamera(): Camera {
-        return this.camera
+        return this.camera;
     }
 
     public getScene(): Scene {
-        return this.scene
+        return this.scene;
     }
 
     public getStarScene(): Scene {
-        return this.starScene
+        return this.starScene;
     }
 
     public getRenderer(): THREE.WebGLRenderer {
-        return this.renderer
+        return this.renderer;
     }
 
     public update(engine: Engine, delta: number): void {
 
         if (this.family) {
             for (const entity of this.family.entities) {
-                const positionComponent = entity.getComponent(PositionComponent)
-                const renderComponent = entity.getComponent(RenderComponent)
+                const positionComponent = entity.getComponent(PositionComponent);
+                const renderComponent = entity.getComponent(RenderComponent);
 
-                renderComponent.getMesh().position.copy(positionComponent.position)
-                renderComponent.update(delta)
+                renderComponent.getMesh().position.copy(positionComponent.position);
+                renderComponent.update(delta);
 
             }
         }
 
-        this.composer.render(delta)
+        this.composer.render(delta);
     }
 
 
 }
 
-export {Renderer}
+export {Renderer};
