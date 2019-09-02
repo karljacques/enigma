@@ -7,63 +7,64 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator'
-    import {Renderer} from '@/engine/renderer'
-    import {Engine} from '@nova-engine/ecs'
-    import {ShipFactory} from '@/engine/factories/shipFactory'
-    import {VelocityApplicationSystem} from '@/engine/systems/VelocityApplicationSystem'
-    import {PositionComponent} from '@/engine/components/positionComponent'
-    import ShaderLoader from '@/components/shaders/ShaderLoader.vue'
-    import {StarFactory} from '@/engine/factories/starFactory'
-    import {Clock, Line, LineBasicMaterial, Vector3} from 'three'
-    import {VelocityComponent} from '@/engine/components/velocityComponent'
-    import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory'
-    import {CameraControlSystem} from '@/engine/systems/cameraControlSystem'
+    import {Component, Vue} from 'vue-property-decorator';
+    import {Renderer} from '@/engine/renderer';
+    import {Engine} from '@nova-engine/ecs';
+    import {ShipFactory} from '@/engine/factories/shipFactory';
+    import {VelocityApplicationSystem} from '@/engine/systems/VelocityApplicationSystem';
+    import {PositionComponent} from '@/engine/components/positionComponent';
+    import ShaderLoader from '@/components/shaders/ShaderLoader.vue';
+    import {StarFactory} from '@/engine/factories/starFactory';
+    import {Clock, Line, LineBasicMaterial, Vector3} from 'three';
+    import {VelocityComponent} from '@/engine/components/velocityComponent';
+    import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
+    import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
 
     @Component({
         components: {ShaderLoader}
     })
     export default class App extends Vue {
-        renderer?: Renderer
-        engine?: Engine
+        renderer?: Renderer;
+        engine?: Engine;
 
         public mounted() {
-            const element = document.getElementById('renderer')
+            const element = document.getElementById('renderer');
 
             if (!element) {
-                throw new Error('Could not find render element')
+                throw new Error('Could not find render element');
             }
 
-            this.engine = new Engine()
-            this.renderer = new Renderer(element)
+            this.engine = new Engine();
+            this.renderer = new Renderer(element);
 
-            this.engine.addSystem(this.renderer)
-            this.engine.addSystem(new VelocityApplicationSystem())
+            this.engine.addSystem(this.renderer);
+            this.engine.addSystem(new VelocityApplicationSystem());
 
-            const shipFactory = new ShipFactory(this.renderer, this.engine)
-            const ship = shipFactory.createShip()
-            ship.getComponent(PositionComponent).position = new Vector3(1, 1, 1)
-            ship.getComponent(VelocityComponent).velocity = new Vector3(0.00, 0.01, 0.00);
+            const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            (new StarFactory(this.renderer, this.engine)).createStar(2)
+            const ship = shipFactory.createShip();
+            ship.getComponent(PositionComponent).position = new Vector3(1, 0, 10);
+            ship.getComponent(VelocityComponent).velocity = new Vector3(0.00, 0.00, 0.01);
+
+            (new StarFactory(this.renderer, this.engine)).createStar(2);
 
             const circleFactory = new CircleGeometryFactory()
 
             ;[25, 50, 75, 125].forEach((radius: number) => {
-                const geo = circleFactory.createCircleGeometry(radius, 100)
-                this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})))
-            })
+                const geo = circleFactory.createCircleGeometry(radius, 100);
+                this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})));
+            });
 
-            const cameraControl = new CameraControlSystem(this.renderer.getCamera())
-            this.engine.addSystem(cameraControl)
+            const cameraControl = new CameraControlSystem(this.renderer.getCamera());
+            this.engine.addSystem(cameraControl);
 
-            const clock = new Clock
+            const clock = new Clock;
             const animate = () => {
 
-                this.engine.update(clock.getDelta())
-                requestAnimationFrame(animate)
-            }
-            animate()
+                this.engine.update(clock.getDelta());
+                requestAnimationFrame(animate);
+            };
+            animate();
         }
     }
 </script>
