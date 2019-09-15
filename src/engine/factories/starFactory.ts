@@ -1,7 +1,7 @@
 import {Star} from '@/engine/entities/star';
-import {PositionComponent} from '@/engine/components/positionComponent';
+import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {Mesh, RepeatWrapping, ShaderMaterial, SphereGeometry, TextureLoader, Vector2, Vector3} from 'three';
-import {StarRenderComponent} from '@/engine/components/starRenderComponent';
+import {StarRenderComponent} from '@/engine/components/render/starRenderComponent';
 import {Renderer} from '@/engine/renderer';
 import {Engine} from '@nova-engine/ecs';
 

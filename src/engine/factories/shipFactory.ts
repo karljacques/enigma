@@ -1,11 +1,11 @@
 import {Ship} from '@/engine/entities/ship';
-import {PositionComponent} from '@/engine/components/positionComponent';
-import {RenderComponent} from '@/engine/components/renderComponent';
-import {VelocityComponent} from '@/engine/components/velocityComponent';
+import {PositionComponent} from '@/engine/components/world/positionComponent';
+import {RenderComponent} from '@/engine/components/render/renderComponent';
+import {VelocityComponent} from '@/engine/components/world/velocityComponent';
 import * as THREE from 'three';
 import {Renderer} from '@/engine/renderer';
 import {Engine} from '@nova-engine/ecs';
-import {ShipSelectableComponent} from '@/engine/components/ShipSelectableComponent';
+import {ShipSelectableComponent} from '@/engine/components/selection/shipSelectableComponent';
 
 class ShipFactory {
 

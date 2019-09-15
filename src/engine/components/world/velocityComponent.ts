@@ -1,5 +1,5 @@
-import {Component} from '@nova-engine/ecs'
-import {Vector3} from 'three'
+import {Component} from '@nova-engine/ecs';
+import {Vector3} from 'three';
 
 class VelocityComponent implements Component {
     public tag = 'VelocityComponent'

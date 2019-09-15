@@ -1,4 +1,4 @@
-import {SelectableComponent} from '@/engine/components/selectableComponent';
+import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 
 class ShipSelectableComponent extends SelectableComponent {
     public onSelection() {

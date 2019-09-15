@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three';
 import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {RenderComponent} from '@/engine/components/renderComponent';
-import {PositionComponent} from '@/engine/components/positionComponent';
+import {RenderComponent} from '@/engine/components/render/renderComponent';
+import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
 import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass';

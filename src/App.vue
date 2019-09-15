@@ -11,12 +11,12 @@
     import {Renderer} from '@/engine/renderer';
     import {Engine} from '@nova-engine/ecs';
     import {ShipFactory} from '@/engine/factories/shipFactory';
-    import {VelocityApplicationSystem} from '@/engine/systems/VelocityApplicationSystem';
-    import {PositionComponent} from '@/engine/components/positionComponent';
+    import {VelocityApplicationSystem} from '@/engine/systems/velocityApplicationSystem';
+    import {PositionComponent} from '@/engine/components/world/positionComponent';
     import ShaderLoader from '@/components/shaders/ShaderLoader.vue';
     import {StarFactory} from '@/engine/factories/starFactory';
     import {Clock, Line, LineBasicMaterial, Vector3} from 'three';
-    import {VelocityComponent} from '@/engine/components/velocityComponent';
+    import {VelocityComponent} from '@/engine/components/world/velocityComponent';
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
     import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';

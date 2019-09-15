@@ -1,4 +1,4 @@
-import {RenderComponent} from '@/engine/components/renderComponent'
+import {RenderComponent} from '@/engine/components/render/renderComponent';
 
 class StarRenderComponent extends RenderComponent {
 

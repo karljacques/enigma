@@ -1,6 +1,6 @@
 import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {VelocityComponent} from '@/engine/components/velocityComponent';
-import {PositionComponent} from '@/engine/components/positionComponent';
+import {VelocityComponent} from '@/engine/components/world/velocityComponent';
+import {PositionComponent} from '@/engine/components/world/positionComponent';
 
 class VelocityApplicationSystem extends System {
 

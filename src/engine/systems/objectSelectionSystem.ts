@@ -1,7 +1,7 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
 import {Camera, Raycaster, Scene, Vector2} from 'three';
-import {RenderComponent} from '@/engine/components/renderComponent';
-import {SelectableComponent} from '@/engine/components/selectableComponent';
+import {RenderComponent} from '@/engine/components/render/renderComponent';
+import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 
 class ObjectSelectionSystem extends System {
     protected raycaster = new Raycaster();
