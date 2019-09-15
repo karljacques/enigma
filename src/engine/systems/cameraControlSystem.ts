@@ -95,6 +95,9 @@ class CameraControlSystem extends System {
             const movementX = event.movementX / 100.0;
             const movementY = -event.movementY / 100.0;
 
+            this.camera.rotateX(movementX);
+            this.camera.rotateY(movementY);
+
         }
     }
 

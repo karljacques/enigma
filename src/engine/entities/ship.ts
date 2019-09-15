@@ -1,6 +1,7 @@
-import {Entity} from '@nova-engine/ecs'
+import {Entity} from '@nova-engine/ecs';
 
 class Ship extends Entity {
+
 }
 
-export {Ship}
+export {Ship};

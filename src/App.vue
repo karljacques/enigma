@@ -19,6 +19,7 @@
     import {VelocityComponent} from '@/engine/components/velocityComponent';
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
+    import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';
 
     @Component({
         components: {ShaderLoader}
@@ -54,6 +55,9 @@
                 const geo = circleFactory.createCircleGeometry(radius, 100);
                 this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})));
             });
+
+            // new BackgroundSpriteFactory(this.renderer, element).createBackgroundSprite('/textures/stars.png');
+            this.engine.addSystem(new ObjectSelectionSystem(this.renderer.getCamera(), this.renderer.getScene()));
 
             const cameraControl = new CameraControlSystem(this.renderer.getCamera());
             this.engine.addSystem(cameraControl);
