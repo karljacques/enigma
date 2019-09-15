@@ -20,6 +20,7 @@
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
     import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';
+    import {ShipMovementControlSystem} from '@/engine/systems/shipMovementControlSystem';
 
     @Component({
         components: {ShaderLoader}
@@ -43,9 +44,11 @@
 
             const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            const ship = shipFactory.createShip();
-            ship.getComponent(PositionComponent).position = new Vector3(1, 0, 10);
-            ship.getComponent(VelocityComponent).velocity = new Vector3(0.00, 0.00, 0.01);
+            for (let i = 0; i < 100; i++) {
+                const ship = shipFactory.createShip();
+                ship.getComponent(PositionComponent).position = new Vector3(i, 0, 10);
+                ship.getComponent(VelocityComponent).velocity = new Vector3(0.00, 0.00, Math.random() * 0.01);
+            }
 
             (new StarFactory(this.renderer, this.engine)).createStar(2);
 
@@ -58,6 +61,7 @@
 
             // new BackgroundSpriteFactory(this.renderer, element).createBackgroundSprite('/textures/stars.png');
             this.engine.addSystem(new ObjectSelectionSystem(this.renderer.getCamera(), this.renderer.getScene()));
+            this.engine.addSystem(new ShipMovementControlSystem(this.renderer.getCamera(), this.renderer.getScene()));
 
             const cameraControl = new CameraControlSystem(this.renderer.getCamera());
             this.engine.addSystem(cameraControl);

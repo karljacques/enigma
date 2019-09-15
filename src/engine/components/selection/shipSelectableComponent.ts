@@ -1,11 +1,11 @@
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 
 class ShipSelectableComponent extends SelectableComponent {
-    public onSelection() {
+    protected onSelection() {
         console.log('Reporting for Duty!');
     }
 
-    public onDeselection() {
+    protected onDeselection() {
         console.log('awwww');
     }
 }

@@ -8,7 +8,7 @@ import {Engine} from '@nova-engine/ecs';
 import {ShipSelectableComponent} from '@/engine/components/selection/shipSelectableComponent';
 
 class ShipFactory {
-
+    protected id = 1;
     public constructor(protected renderer: Renderer, protected engine: Engine) {
 
     }
@@ -29,7 +29,8 @@ class ShipFactory {
         this.renderer.getScene().add(mesh);
         this.engine.addEntity(ship);
 
-        ship.id = 1701;
+        ship.id = this.id;
+        this.id++;
 
         return ship;
     }
