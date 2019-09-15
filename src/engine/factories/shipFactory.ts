@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import {Renderer} from '@/engine/renderer';
 import {Engine} from '@nova-engine/ecs';
 import {ShipSelectableComponent} from '@/engine/components/selection/shipSelectableComponent';
+import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 
 class ShipFactory {
     protected id = 1;
@@ -20,6 +21,7 @@ class ShipFactory {
         ship.putComponent(RenderComponent);
         ship.putComponent(VelocityComponent);
         ship.putComponent(ShipSelectableComponent);
+        ship.putComponent(FlightComputerComponent);
 
         const geometry = new THREE.ConeGeometry(0.25, 1, 32);
         const material = new THREE.MeshBasicMaterial({color: 0x00ff00});

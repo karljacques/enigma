@@ -18,7 +18,12 @@ class VelocityApplicationSystem extends System {
                 const velocityComponent = entity.getComponent(VelocityComponent);
                 const positionComponent = entity.getComponent(PositionComponent);
 
-                positionComponent.position.add(velocityComponent.getVelocity());
+                const newVelocity = velocityComponent.getVelocity()
+                    .add(velocityComponent.getAcceleration().multiplyScalar(delta));
+
+                velocityComponent.setVelocity(newVelocity);
+
+                positionComponent.position.add(velocityComponent.getVelocity().multiplyScalar(delta));
             }
         }
     }

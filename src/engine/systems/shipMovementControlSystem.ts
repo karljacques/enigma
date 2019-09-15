@@ -1,8 +1,7 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
 import {Camera, Plane, Raycaster, Scene, Vector2, Vector3} from 'three';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
-import {PositionComponent} from '@/engine/components/world/positionComponent';
-import {VelocityComponent} from '@/engine/components/world/velocityComponent';
+import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 
 class ShipMovementControlSystem extends System {
     protected plane = new Plane(new Vector3(0.0, 1.0, 0.0), 0);
@@ -36,14 +35,12 @@ class ShipMovementControlSystem extends System {
         if (this.selectables) {
             this.selectables.entities.forEach((entity: Entity) => {
                 const selectable = entity.getComponent(SelectableComponent);
-                console.log(entity);
-                console.log(selectable);
-                if (selectable.isSelected()) {
-                    const positionComponent = entity.getComponent(PositionComponent);
-                    const velocityComponent = entity.getComponent(VelocityComponent);
 
-                    const direction = this.target.sub(positionComponent.position);
-                    velocityComponent.setVelocity(direction.normalize().multiplyScalar(0.01));
+                if (selectable.isSelected()) {
+                    if (entity.hasComponent(FlightComputerComponent)) {
+                        const flightComputer = entity.getComponent(FlightComputerComponent);
+                        flightComputer.setTarget(this.target);
+                    }
                 }
             });
         }
