@@ -10,6 +10,7 @@ import {FlightComputerComponent} from '@/engine/components/ship/flightComputerCo
 
 class ShipFactory {
     protected id = 1;
+
     public constructor(protected renderer: Renderer, protected engine: Engine) {
 
     }
@@ -21,7 +22,7 @@ class ShipFactory {
         ship.putComponent(RenderComponent);
         ship.putComponent(VelocityComponent);
         ship.putComponent(ShipSelectableComponent);
-        ship.putComponent(FlightComputerComponent);
+        ship.putComponent(FlightComputerComponent).initialise(ship);
 
         const geometry = new THREE.ConeGeometry(0.25, 1, 32);
         const material = new THREE.MeshBasicMaterial({color: 0x00ff00});

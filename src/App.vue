@@ -16,7 +16,6 @@
     import ShaderLoader from '@/components/shaders/ShaderLoader.vue';
     import {StarFactory} from '@/engine/factories/starFactory';
     import {Clock, Line, LineBasicMaterial, Vector3} from 'three';
-    import {VelocityComponent} from '@/engine/components/world/velocityComponent';
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
     import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';
@@ -45,10 +44,9 @@
 
             const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 5; i++) {
                 const ship = shipFactory.createShip();
-                ship.getComponent(PositionComponent).position = new Vector3(i, 0, 10);
-                ship.getComponent(VelocityComponent).setVelocity(new Vector3(1.00, 0.00, Math.random()));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(i, 0, 10));
             }
 
             (new StarFactory(this.renderer, this.engine)).createStar(2);

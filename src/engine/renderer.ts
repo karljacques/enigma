@@ -98,7 +98,7 @@ class Renderer extends System {
                 const positionComponent = entity.getComponent(PositionComponent);
                 const renderComponent = entity.getComponent(RenderComponent);
 
-                renderComponent.getMesh().position.copy(positionComponent.position);
+                renderComponent.getMesh().position.copy(positionComponent.getPosition());
                 renderComponent.update(delta);
 
             }

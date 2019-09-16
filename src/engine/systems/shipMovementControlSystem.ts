@@ -1,5 +1,5 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Camera, Plane, Raycaster, Scene, Vector2, Vector3} from 'three';
+import {Camera, Mesh, MeshBasicMaterial, Plane, Raycaster, Scene, SphereGeometry, Vector2, Vector3} from 'three';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 
@@ -40,6 +40,14 @@ class ShipMovementControlSystem extends System {
                     if (entity.hasComponent(FlightComputerComponent)) {
                         const flightComputer = entity.getComponent(FlightComputerComponent);
                         flightComputer.setTarget(this.target);
+
+
+                        const geometry = new SphereGeometry(0.1);
+                        const material = new MeshBasicMaterial({color: 0xff0000});
+                        const mesh = new Mesh(geometry, material);
+
+                        mesh.position.copy(this.target);
+                        this.scene.add(mesh);
                     }
                 }
             });
