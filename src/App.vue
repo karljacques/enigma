@@ -21,6 +21,7 @@
     import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';
     import {ShipMovementControlSystem} from '@/engine/systems/shipMovementControlSystem';
     import {FlightComputerProcessorSystem} from '@/engine/systems/flightComputerProcessorSystem';
+    import {engine} from '@/engine';
 
     @Component({
         components: {ShaderLoader}
@@ -36,7 +37,7 @@
                 throw new Error('Could not find render element');
             }
 
-            this.engine = new Engine();
+            this.engine = engine;
             this.renderer = new Renderer(element);
 
             this.engine.addSystem(this.renderer);
