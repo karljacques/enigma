@@ -12,12 +12,25 @@ class ObjectSelectionSystem extends System {
     protected family?: Family;
     protected selectables?: Family;
 
+    protected selectMultiple: boolean = false;
+
     constructor(protected camera: Camera, protected scene: Scene, protected circleGeometryFactory: CircleGeometryFactory) {
         super();
 
         window.addEventListener('mousemove', (event: MouseEvent) => this.onMouseMove(event));
-
         window.addEventListener('mousedown', (event: MouseEvent) => this.onMouseClick(event));
+
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (event.key === 'Shift') {
+                this.selectMultiple = true;
+            }
+        });
+
+        window.addEventListener('keyup', (event: KeyboardEvent) => {
+            if (event.key === 'Shift') {
+                this.selectMultiple = false;
+            }
+        });
     }
 
     public onAttach(engine: Engine): void {
@@ -41,9 +54,10 @@ class ObjectSelectionSystem extends System {
     }
 
     protected onMouseClick(event: MouseEvent) {
-        console.log(event.button);
         if (event.button === 0) {
-            this.unselectAllSelected();
+            if (!this.selectMultiple) {
+                this.unselectAllSelected();
+            }
 
             if (this.family) {
                 this.raycaster.setFromCamera(this.mouse, this.camera);
