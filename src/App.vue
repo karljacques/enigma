@@ -59,7 +59,7 @@
             });
 
             // new BackgroundSpriteFactory(this.renderer, element).createBackgroundSprite('/textures/stars.png');
-            this.engine.addSystem(new ObjectSelectionSystem(this.renderer.getCamera(), this.renderer.getScene()));
+            this.engine.addSystem(new ObjectSelectionSystem(this.renderer.getCamera(), this.renderer.getScene(), circleFactory));
             this.engine.addSystem(new ShipMovementControlSystem(this.renderer.getCamera(), this.renderer.getScene()));
             this.engine.addSystem(new FlightComputerProcessorSystem());
 

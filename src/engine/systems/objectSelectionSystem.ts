@@ -1,7 +1,9 @@
-import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Camera, Raycaster, Scene, Vector2} from 'three';
+import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
+import {Camera, Line, LineBasicMaterial, Raycaster, Scene, Vector2} from 'three';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
+import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
+import {PositionComponent} from '@/engine/components/world/positionComponent';
 
 class ObjectSelectionSystem extends System {
     protected raycaster = new Raycaster();
@@ -10,7 +12,7 @@ class ObjectSelectionSystem extends System {
     protected family?: Family;
     protected selectables?: Family;
 
-    constructor(protected camera: Camera, protected scene: Scene) {
+    constructor(protected camera: Camera, protected scene: Scene, protected circleGeometryFactory: CircleGeometryFactory) {
         super();
 
         window.addEventListener('mousemove', (event: MouseEvent) => this.onMouseMove(event));
@@ -26,7 +28,16 @@ class ObjectSelectionSystem extends System {
     }
 
     public update(engine: Engine, delta: number): void {
-
+        // Move selection indicators accordingly
+        if (this.selectables) {
+            this.selectables.entities.forEach((entity: Entity) => {
+                const selectionComponent = entity.getComponent(SelectableComponent);
+                if (selectionComponent.selectionIndicatorObject) {
+                    const positionComponent = entity.getComponent(PositionComponent);
+                    selectionComponent.selectionIndicatorObject.position.copy(positionComponent.getPosition());
+                }
+            });
+        }
     }
 
     protected onMouseClick(event: MouseEvent) {
@@ -48,7 +59,7 @@ class ObjectSelectionSystem extends System {
                         if (entity.hasComponent(SelectableComponent)) {
                             const renderComponent = entity.getComponent(RenderComponent);
                             if (renderComponent.getMesh() === selectedObject) {
-                                entity.getComponent(SelectableComponent).select();
+                                this.selectEntity(entity);
                             }
                         }
 
@@ -60,11 +71,33 @@ class ObjectSelectionSystem extends System {
 
     }
 
+    protected selectEntity(entity: Entity): void {
+        const selectableComponent = entity.getComponent(SelectableComponent);
+
+        selectableComponent.select();
+
+        if (selectableComponent.selectionIndicatorObject === null) {
+            const geometry = this.circleGeometryFactory.createCircleGeometry(0.75);
+            selectableComponent.selectionIndicatorObject = new Line(geometry, new LineBasicMaterial({color: 0x0000FF}));
+            this.scene.add(selectableComponent.selectionIndicatorObject);
+        }
+    }
+
+    protected deselectEntity(entity: Entity): void {
+        const selectableComponent = entity.getComponent(SelectableComponent);
+
+        selectableComponent.deselect();
+
+        if (selectableComponent.selectionIndicatorObject !== null) {
+            this.scene.remove(selectableComponent.selectionIndicatorObject);
+            selectableComponent.selectionIndicatorObject = null;
+        }
+    }
+
     protected unselectAllSelected() {
         if (this.selectables) {
             for (const entity of this.selectables.entities) {
-                const component = entity.getComponent(SelectableComponent);
-                component.deselect();
+                this.deselectEntity(entity);
             }
         }
     }

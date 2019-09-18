@@ -1,7 +1,10 @@
 import {Component} from '@nova-engine/ecs';
+import {Object3D} from 'three';
 
 class SelectableComponent implements Component {
     public static tag = 'SelectableComponent';
+
+    public selectionIndicatorObject: Object3D | null = null;
 
     protected selected: boolean = false;
 
@@ -32,6 +35,7 @@ class SelectableComponent implements Component {
         this.selected = false;
         console.log('Generic Deselection');
     }
+
 }
 
 export {SelectableComponent};
