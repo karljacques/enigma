@@ -4,7 +4,7 @@
         <div>
             <h4>Selected Ships</h4>
             <ul>
-                <li v-for="entity in selectables">
+                <li v-for="entity in selected">
                     {{ entity.id }}
                 </li>
             </ul>
@@ -29,8 +29,16 @@
         }
 
         get selectables() {
+            console.log('selectables');
             return this.entities.filter((entity: Entity) => {
-                return entity.hasComponent(SelectableComponent) && entity.getComponent(SelectableComponent).isSelected();
+                return entity.hasComponent(SelectableComponent);
+            });
+        }
+
+        get selected() {
+            console.log('selected');
+            return this.selectables.filter((entity: Entity) => {
+                return entity.getComponent(SelectableComponent).isSelected();
             });
         }
 
