@@ -18,14 +18,15 @@
     import {Clock, Line, LineBasicMaterial, Vector3} from 'three';
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
-    import {ObjectSelectionSystem} from '@/engine/systems/objectSelectionSystem';
+    import {EntitySelectionSystem} from '@/engine/systems/entitySelectionSystem';
     import {ShipMovementControlSystem} from '@/engine/systems/shipMovementControlSystem';
     import {FlightComputerProcessorSystem} from '@/engine/systems/flightComputerProcessorSystem';
     import {engine} from '@/engine';
+    import {InputSystem} from '@/engine/systems/InputSystem';
 
     @Component({
-        components: {ShaderLoader}
-    })
+                   components: {ShaderLoader}
+               })
     export default class App extends Vue {
         renderer?: Renderer;
         engine?: Engine;
@@ -37,7 +38,7 @@
                 throw new Error('Could not find render element');
             }
 
-            this.engine = engine;
+            this.engine   = engine;
             this.renderer = new Renderer(element);
 
             this.engine.addSystem(this.renderer);
@@ -59,15 +60,23 @@
                 this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})));
             });
 
-            // new BackgroundSpriteFactory(this.renderer, element).createBackgroundSprite('/textures/stars.png');
-            this.engine.addSystem(new ObjectSelectionSystem(this.renderer.getCamera(), this.renderer.getScene(), circleFactory));
-            this.engine.addSystem(new ShipMovementControlSystem(this.renderer.getCamera(), this.renderer.getScene()));
+            const inputSystem = new InputSystem(this.renderer.getCamera());
+            this.engine.addSystem(inputSystem);
+
+            const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(), circleFactory, inputSystem);
+            this.engine.addSystem(entitySelectionSystem);
+            inputSystem.addEventListener(entitySelectionSystem);
+
+            const shipMovementControlSystem = new ShipMovementControlSystem(this.renderer.getScene());
+            this.engine.addSystem(shipMovementControlSystem);
+            inputSystem.addEventListener(shipMovementControlSystem);
+
             this.engine.addSystem(new FlightComputerProcessorSystem());
 
             const cameraControl = new CameraControlSystem(this.renderer.getCamera());
             this.engine.addSystem(cameraControl);
 
-            const clock = new Clock;
+            const clock   = new Clock;
             const animate = () => {
 
                 this.engine.update(clock.getDelta());

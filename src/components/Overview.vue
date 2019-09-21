@@ -29,14 +29,12 @@
         }
 
         get selectables() {
-            console.log('selectables');
             return this.entities.filter((entity: Entity) => {
                 return entity.hasComponent(SelectableComponent);
             });
         }
 
         get selected() {
-            console.log('selected');
             return this.selectables.filter((entity: Entity) => {
                 return entity.getComponent(SelectableComponent).isSelected();
             });

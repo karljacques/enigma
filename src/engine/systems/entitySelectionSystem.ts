@@ -1,42 +1,28 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Camera, Line, LineBasicMaterial, Raycaster, Scene, Vector2} from 'three';
+import {Line, LineBasicMaterial, Scene} from 'three';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
+import {InputEventListener} from '@/engine/systems/input/inputEventListener';
+import {WorldMouseEvent} from '@/engine/systems/input/WorldMouseEvent';
+import {InputSystem} from '@/engine/systems/InputSystem';
 
-class ObjectSelectionSystem extends System {
-    protected raycaster = new Raycaster();
-    protected mouse = new Vector2();
-
+class EntitySelectionSystem extends System implements InputEventListener {
     protected family?: Family;
     protected selectables?: Family;
 
-    protected selectMultiple: boolean = false;
-
-    constructor(protected camera: Camera, protected scene: Scene, protected circleGeometryFactory: CircleGeometryFactory) {
+    constructor(protected scene: Scene,
+                protected circleGeometryFactory: CircleGeometryFactory,
+                protected inputSystem: InputSystem,
+    ) {
         super();
-
-        window.addEventListener('mousemove', (event: MouseEvent) => this.onMouseMove(event));
-        window.addEventListener('mousedown', (event: MouseEvent) => this.onMouseClick(event));
-
-        window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'Shift') {
-                this.selectMultiple = true;
-            }
-        });
-
-        window.addEventListener('keyup', (event: KeyboardEvent) => {
-            if (event.key === 'Shift') {
-                this.selectMultiple = false;
-            }
-        });
     }
 
     public onAttach(engine: Engine): void {
         super.onAttach(engine);
 
-        this.family = new FamilyBuilder(engine).include(RenderComponent).build();
+        this.family      = new FamilyBuilder(engine).include(RenderComponent).build();
         this.selectables = new FamilyBuilder(engine).include(SelectableComponent).build();
     }
 
@@ -53,17 +39,21 @@ class ObjectSelectionSystem extends System {
         }
     }
 
-    protected onMouseClick(event: MouseEvent) {
+    public onInputEvent(type: string, event: Event): void {
+        if (type === 'click') {
+            this.onMouseClick(event as WorldMouseEvent);
+        }
+    }
+
+    protected onMouseClick(event: WorldMouseEvent) {
         if (event.button === 0) {
-            if (!this.selectMultiple) {
+            if (!this.inputSystem.isKeyPressed('Shift')) {
                 this.unselectAllSelected();
             }
 
             if (this.family) {
-                this.raycaster.setFromCamera(this.mouse, this.camera);
-
                 // calculate objects intersecting the picking ray
-                const intersects = this.raycaster.intersectObjects(this.scene.children);
+                const intersects = event.raycaster.intersectObjects(this.scene.children);
 
                 for (const obj of intersects) {
                     const selectedObject = obj.object;
@@ -91,7 +81,7 @@ class ObjectSelectionSystem extends System {
         selectableComponent.select();
 
         if (selectableComponent.selectionIndicatorObject === null) {
-            const geometry = this.circleGeometryFactory.createCircleGeometry(0.75);
+            const geometry                               = this.circleGeometryFactory.createCircleGeometry(0.75);
             selectableComponent.selectionIndicatorObject = new Line(geometry, new LineBasicMaterial({color: 0x0000FF}));
             this.scene.add(selectableComponent.selectionIndicatorObject);
         }
@@ -116,11 +106,6 @@ class ObjectSelectionSystem extends System {
         }
     }
 
-    protected onMouseMove(event: MouseEvent) {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    }
-
 }
 
-export {ObjectSelectionSystem};
+export {EntitySelectionSystem};

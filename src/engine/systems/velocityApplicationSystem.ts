@@ -23,7 +23,10 @@ class VelocityApplicationSystem extends System {
 
                 velocityComponent.setVelocity(newVelocity);
 
-                positionComponent.setPosition(positionComponent.getPosition().add(velocityComponent.getVelocity().multiplyScalar(delta)));
+                const movement    = velocityComponent.getVelocity().multiplyScalar(delta);
+                const newPosition = positionComponent.getPosition().add(movement);
+
+                positionComponent.setPosition(newPosition);
             }
         }
     }
