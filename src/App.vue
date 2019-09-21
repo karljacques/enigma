@@ -1,8 +1,11 @@
 <template>
     <div id="app">
-        <router-view/>
-        <shader-loader></shader-loader>
-        <div id="renderer"></div>
+        <v-app theme="dark">
+            <router-view/>
+            <shader-loader></shader-loader>
+            <div id="renderer"></div>
+        </v-app>
+
     </div>
 </template>
 
@@ -94,6 +97,16 @@
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
+    }
+
+    .theme--dark {
+        &.v-application {
+            background: transparent !important;
+
+            .v-sheet {
+                background-color: rgba(76, 76, 76, 0.8) !important;
+            }
+        }
     }
 
     body {

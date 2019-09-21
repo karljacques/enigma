@@ -20,8 +20,8 @@ class InputSystem extends System {
         window.addEventListener('click', (event: MouseEvent) => this.onClick(event));
         window.addEventListener('mousemove', (event: MouseEvent) => this.onMouseMove(event));
 
-        window.addEventListener('keydown', this.onKeyDown);
-        window.addEventListener('keyup', this.onKeyUp);
+        window.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
+        window.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUp(event));
     }
 
     public addEventListener(listener: InputEventListener): void {
@@ -62,9 +62,9 @@ class InputSystem extends System {
     }
 
     protected onRightClick(event: MouseEvent): void {
-        if (!event.composedPath().map((x: any) => x.id).includes('renderer')) {
-            return;
-        }
+        // if (!event.composedPath().map((x: any) => x.id).includes('renderer')) {
+        //     return;
+        // }
 
         event.preventDefault();
 
@@ -81,10 +81,10 @@ class InputSystem extends System {
     }
 
     protected onClick(event: MouseEvent): void {
-        // This requires a polyfill on Edge/IE
-        if (!event.composedPath().map((x: any) => x.id).includes('renderer')) {
-            return;
-        }
+        // // This requires a polyfill on Edge/IE
+        // if (!event.composedPath().map((x: any) => x.id).includes('renderer')) {
+        //     return;
+        // }
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
         this.raycaster.ray.intersectPlane(this.plane, this.planeIntersectionPoint);

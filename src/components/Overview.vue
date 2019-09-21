@@ -1,15 +1,22 @@
 <template>
-    <div>
-        <h1>Overview</h1>
-        <div>
-            <h4>Selected Ships</h4>
-            <ul>
-                <li v-for="entity in selected">
-                    {{ entity.id }}
-                </li>
-            </ul>
-        </div>
-    </div>
+    <v-row>
+        <v-col>
+            <v-card>
+                <h1>Overview</h1>
+                <div>
+                    <h4>Selected Ships</h4>
+                    <ul>
+                        <li v-for="entity in selected">
+                            {{ entity.name }}
+                        </li>
+                    </ul>
+                </div>
+            </v-card>
+        </v-col>
+        <v-spacer/>
+        <v-spacer/>
+        <v-spacer/>
+    </v-row>
 
 
 </template>

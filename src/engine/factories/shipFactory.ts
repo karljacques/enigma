@@ -7,6 +7,7 @@ import {Renderer} from '@/engine/renderer';
 import {Engine} from '@nova-engine/ecs';
 import {ShipSelectableComponent} from '@/engine/components/selection/shipSelectableComponent';
 import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
+import shipNames from './../entities/ship/nameList';
 
 class ShipFactory {
     protected id = 1;
@@ -18,15 +19,17 @@ class ShipFactory {
     public createShip(): Ship {
         const ship = new Ship();
 
+        ship.name = shipNames[Math.floor(Math.random() * shipNames.length)];
+
         ship.putComponent(PositionComponent);
         ship.putComponent(RenderComponent);
         ship.putComponent(VelocityComponent);
         ship.putComponent(ShipSelectableComponent);
         ship.putComponent(FlightComputerComponent).initialise(ship);
 
-        const geometry = new THREE.ConeGeometry(0.25, 1, 32);
-        const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-        const mesh = new THREE.Mesh(geometry, material);
+        const geometry                          = new THREE.ConeGeometry(0.25, 1, 32);
+        const material                          = new THREE.MeshBasicMaterial({color: 0x00ff00});
+        const mesh                              = new THREE.Mesh(geometry, material);
         ship.getComponent(RenderComponent).mesh = mesh;
 
         this.renderer.getScene().add(mesh);
