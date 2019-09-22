@@ -31,9 +31,10 @@ class SelectionHelper {
         this.isDown = false;
 
         document.addEventListener('mousedown', (event) => {
-            this.isDown = true;
-            this.onSelectStart(event);
-
+            if (event.button === 0) {
+                this.isDown = true;
+                this.onSelectStart(event);
+            }
         }, false);
 
         document.addEventListener('mousemove', (event) => {
