@@ -2,17 +2,18 @@ import {Camera, Plane, Raycaster, Vector2, Vector3} from 'three';
 import {Engine, System} from '@nova-engine/ecs';
 
 class CameraControlSystem extends System {
-    protected mouse = new Vector2();
+    protected mouse     = new Vector2();
     protected raycaster = new Raycaster();
 
     protected plane = new Plane(new Vector3(0.0, 1.0, 0.0), 0);
 
-    protected intersect = new Vector3();
+    protected mouseIntersect  = new Vector3();
+    protected cameraIntersect = new Vector3();
 
-    protected moveUpPressed: boolean = false;
+    protected moveUpPressed: boolean   = false;
     protected moveDownPressed: boolean = false;
 
-    protected moveLeftPressed: boolean = false;
+    protected moveLeftPressed: boolean  = false;
     protected moveRightPressed: boolean = false;
 
     protected holdingRotationTrigger: boolean = false;
@@ -33,18 +34,18 @@ class CameraControlSystem extends System {
 
         // If the current tab loses focus, it won't detect key-ups
         window.onblur = () => {
-            this.moveLeftPressed = false;
+            this.moveLeftPressed  = false;
             this.moveRightPressed = false;
-            this.moveUpPressed = false;
-            this.moveDownPressed = false;
+            this.moveUpPressed    = false;
+            this.moveDownPressed  = false;
         };
 
         // Similarly, if the user accidentally triggers a contextmenu, camera will keep moving
         window.oncontextmenu = () => {
-            this.moveLeftPressed = false;
+            this.moveLeftPressed  = false;
             this.moveRightPressed = false;
-            this.moveUpPressed = false;
-            this.moveDownPressed = false;
+            this.moveUpPressed    = false;
+            this.moveDownPressed  = false;
         };
     }
 
@@ -75,13 +76,22 @@ class CameraControlSystem extends System {
         }
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        this.raycaster.ray.intersectPlane(this.plane, this.intersect);
+        this.raycaster.ray.intersectPlane(this.plane, this.mouseIntersect);
+
+        this.raycaster.setFromCamera(new Vector2(0, 0), this.camera);
+        this.raycaster.ray.intersectPlane(this.plane, this.cameraIntersect);
 
         this.velocity.lerp(new Vector3(0, 0, 0), delta * 3);
     }
 
     protected onMouseWheel(event: WheelEvent): void {
-        this.velocity.add(this.intersect.sub(this.camera.position).normalize().multiplyScalar(-event.deltaY * 0.005));
+        const multiplier = -event.deltaY * 0.005;
+
+        if (event.deltaY < 0) {
+            this.velocity.add(this.mouseIntersect.sub(this.camera.position).normalize().multiplyScalar(multiplier));
+        } else {
+            this.velocity.add(this.cameraIntersect.sub(this.camera.position).normalize().multiplyScalar(multiplier));
+        }
     }
 
     protected onMouseMove(event: MouseEvent): void {
