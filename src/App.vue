@@ -29,14 +29,14 @@
     import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
     import {Line2} from 'three/examples/jsm/lines/Line2';
     import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
-    import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent'
+    import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 
     @Component({
                    components: {ShaderLoader}
                })
     export default class App extends Vue {
-        renderer?: Renderer;
-        engine?: Engine;
+        renderer!: Renderer;
+        engine!: Engine;
 
         public mounted() {
             const element = document.getElementById('renderer');
@@ -60,9 +60,9 @@
                 }
             }
 
-            for (let i = 0; i <50; i++) {
+            for (let i = 0; i < 50; i++) {
                 const ship = shipFactory.createShip(2);
-                ship.getComponent(PositionComponent).setPosition(new Vector3(-200 + i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(-200 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 
                 ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
 
@@ -70,7 +70,7 @@
 
             for (let i = 0; i < 10; i++) {
                 const ship = shipFactory.createShip(3, 50000);
-                ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 
                 ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
             }
@@ -88,7 +88,12 @@
             const inputSystem = new UserInputSystem(this.renderer.getCamera());
             this.engine.addSystem(inputSystem);
 
-            const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(), circleFactory, inputSystem);
+            console.log(this.renderer.getRenderer().domElement);
+            const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(),
+                                                                    this.renderer.getCamera(),
+                                                                    this.renderer.getRenderer(),
+                                                                    circleFactory,
+                                                                    inputSystem);
             this.engine.addSystem(entitySelectionSystem);
             inputSystem.addEventListener(entitySelectionSystem);
 
@@ -136,6 +141,12 @@
                 background-color: rgba(76, 76, 76, 0.8) !important;
             }
         }
+    }
+
+    .selectBox {
+        border: 1px solid #55aaff;
+        background-color: rgba(75, 160, 255, 0.3);
+        position: fixed;
     }
 
     body {

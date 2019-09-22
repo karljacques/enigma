@@ -26,7 +26,9 @@ class UserInputSystem extends System {
     protected mouse                                = new Vector2();
     protected raycaster                            = new Raycaster();
     protected eventListeners: InputEventListener[] = [];
-    protected keymap: Record<string, boolean>      = {};
+
+    protected keymap: Record<string, boolean>   = {};
+    protected mousemap: Record<number, boolean> = {};
 
     private _planeIntersectionPoint = new Vector3();
 
@@ -39,6 +41,9 @@ class UserInputSystem extends System {
         window.addEventListener('click', (event: MouseEvent) => this.onClick(event));
         window.addEventListener('mousemove', (event: MouseEvent) => this.onMouseMove(event));
         window.addEventListener('wheel', (event: WheelEvent) => this.onWheelEvent(event));
+
+        window.addEventListener('mousedown', (event: MouseEvent) => this.onMouseDown(event));
+        window.addEventListener('mouseup', (event: MouseEvent) => this.onMouseUp(event));
 
         window.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
         window.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUp(event));
@@ -78,9 +83,16 @@ class UserInputSystem extends System {
         return false;
     }
 
+    public isMousePressed(mouse: number): boolean {
+        if (mouse in this.mousemap) {
+            return this.mousemap[mouse];
+        }
+
+        return false;
+    }
+
     protected onKeyUp(event: KeyboardEvent): void {
         const key = event.key.toLowerCase();
-        console.log(key);
 
         this.keymap[key] = false;
     }
@@ -91,7 +103,36 @@ class UserInputSystem extends System {
         this.keymap[key] = true;
     }
 
+    protected onMouseDown(event: MouseEvent): void {
+        this.recalculatePlaneIntersections();
+        this.mousemap[event.button] = true;
+
+        const worldMouseEvent = new WorldMouseEvent('mousedown',
+                                                    event.button,
+                                                    this.mouse,
+                                                    this._planeIntersectionPoint,
+                                                    this.raycaster);
+        this.dispatch('mousedown', worldMouseEvent);
+    }
+
+    protected onMouseUp(event: MouseEvent): void {
+        event.preventDefault();
+        this.recalculatePlaneIntersections();
+
+        this.mousemap[event.button] = false;
+
+        const worldMouseEvent = new WorldMouseEvent('mouseup',
+                                                    event.button,
+                                                    this.mouse,
+                                                    this._planeIntersectionPoint,
+                                                    this.raycaster);
+
+        this.dispatch('mouseup', worldMouseEvent);
+    }
+
     protected onMouseMove(event: MouseEvent): void {
+        event.preventDefault();
+        
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 

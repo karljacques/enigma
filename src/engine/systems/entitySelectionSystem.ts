@@ -1,5 +1,5 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Scene} from 'three';
+import {Camera, Renderer, Scene, WebGLRenderer} from 'three';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
@@ -9,12 +9,19 @@ import {WorldMouseEvent} from '@/engine/systems/input/WorldMouseEvent';
 import {UserInputSystem} from '@/engine/systems/userInputSystem';
 import {Line2} from 'three/examples/jsm/lines/Line2';
 import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
+import {SelectionBox} from 'three/examples/jsm/interactive/SelectionBox';
+import {SelectionHelper} from '@/engine/systems/input/selectionHelper';
 
 class EntitySelectionSystem extends System implements InputEventListener {
-    protected family?: Family;
-    protected selectables?: Family;
+    protected family!: Family;
+    protected selectables!: Family;
+
+    protected selectionBox!: SelectionBox;
+    protected selectionHelper!: SelectionHelper;
 
     constructor(protected scene: Scene,
+                protected camera: Camera,
+                protected renderer: WebGLRenderer,
                 protected circleGeometryFactory: CircleGeometryFactory,
                 protected inputSystem: UserInputSystem,
     ) {
@@ -26,6 +33,9 @@ class EntitySelectionSystem extends System implements InputEventListener {
 
         this.family      = new FamilyBuilder(engine).include(RenderComponent).build();
         this.selectables = new FamilyBuilder(engine).include(SelectableComponent).build();
+
+        this.selectionBox    = new SelectionBox(this.camera, this.scene);
+        this.selectionHelper = new SelectionHelper(this.selectionBox, this.renderer, 'selectBox');
     }
 
     public update(engine: Engine, delta: number): void {
@@ -42,8 +52,43 @@ class EntitySelectionSystem extends System implements InputEventListener {
     }
 
     public onInputEvent(type: string, event: Event): void {
-        if (type === 'click') {
+
+        if (type === 'mousedown') {
             this.onMouseClick(event as WorldMouseEvent);
+            this.startSelection(event as WorldMouseEvent);
+        }
+
+        if (type === 'mousemove') {
+            this.onMouseMove(event as MouseEvent);
+        }
+    }
+
+    protected startSelection(event: WorldMouseEvent): void {
+        this.selectionBox.startPoint.set(event.position.x, event.position.y, 0.5);
+    }
+
+    protected onMouseMove(event: MouseEvent): void {
+        if (this.inputSystem.isMousePressed(0)) {
+            this.selectionBox.endPoint.set(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1,
+                0.5);
+
+            const allSelected = this.selectionBox.select(this.selectionBox.startPoint, this.selectionBox.endPoint);
+
+            for (const obj of allSelected) {
+                // Find the render component which has this object
+                for (const entity of this.family.entities) {
+                    if (entity.hasComponent(SelectableComponent)) {
+                        const renderComponent = entity.getComponent(RenderComponent);
+                        if (renderComponent.getMesh() === obj) {
+                            this.selectEntity(entity);
+                        }
+                    }
+
+                }
+
+            }
         }
     }
 
@@ -92,6 +137,9 @@ class EntitySelectionSystem extends System implements InputEventListener {
             line.scale.set(1, 1, 1);
 
             selectableComponent.selectionIndicatorObject = line;
+
+            const position = entity.getComponent(PositionComponent).getPosition();
+            line.position.copy(position);
 
             this.scene.add(line);
         }
