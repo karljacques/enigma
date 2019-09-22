@@ -8,6 +8,10 @@ import {Engine} from '@nova-engine/ecs';
 import {ShipSelectableComponent} from '@/engine/components/selection/shipSelectableComponent';
 import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 import shipNames from './../entities/ship/nameList';
+import {HealthComponent} from '@/engine/components/ship/healthComponent';
+import {LoadoutComponent} from '@/engine/components/ship/LoadoutComponent';
+import {Weapon} from '@/engine/class/weapon';
+import {AU} from '@/engine/scalingHelper';
 
 class ShipFactory {
     protected id = 1;
@@ -26,6 +30,12 @@ class ShipFactory {
         ship.putComponent(RenderComponent);
         ship.putComponent(VelocityComponent);
         ship.putComponent(FlightComputerComponent).initialise(ship);
+        ship.putComponent(HealthComponent);
+
+        const loadout = ship.putComponent(LoadoutComponent);
+
+        const weapon = new Weapon(50, 50, 0.1 * AU, 1000);
+        loadout.weapons.push(weapon);
 
         ship.mass        = mass;
         ship.enginePower = enginePower;

@@ -30,6 +30,7 @@
     import {Line2} from 'three/examples/jsm/lines/Line2';
     import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
     import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
+    import {AutomatedFiringSystem} from '@/engine/systems/automatedFiringSystem'
 
     @Component({
                    components: {ShaderLoader}
@@ -62,9 +63,9 @@
 
             for (let i = 0; i < 50; i++) {
                 const ship = shipFactory.createShip(2);
-                ship.getComponent(PositionComponent).setPosition(new Vector3(-200 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 10 + Math.random() * 20.0));
 
-                ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
+                // ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
 
             }
 
@@ -96,6 +97,8 @@
                                                                     inputSystem);
             this.engine.addSystem(entitySelectionSystem);
             inputSystem.addEventListener(entitySelectionSystem);
+
+            this.engine.addSystem(new AutomatedFiringSystem());
 
             const shipMovementControlSystem = new ShipMovementControlSystem(this.renderer.getScene());
             this.engine.addSystem(shipMovementControlSystem);
