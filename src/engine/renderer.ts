@@ -25,7 +25,7 @@ class Renderer extends System {
     constructor(mountElement: Element) {
         super();
 
-        this.scene = new Scene();
+        this.scene     = new Scene();
         this.starScene = new Scene();
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 30000);
@@ -52,11 +52,11 @@ class Renderer extends System {
             1.5, 0.4, 0.85);
 
         effectBloom.threshold = 0;
-        effectBloom.strength = 2;
-        effectBloom.radius = 1;
+        effectBloom.strength  = 2;
+        effectBloom.radius    = 1;
 
 
-        const outputPass = new ShaderPass(CopyShader);
+        const outputPass          = new ShaderPass(CopyShader);
         outputPass.renderToScreen = true;
 
         const clearPass = new ClearPass();
@@ -67,6 +67,12 @@ class Renderer extends System {
         this.composer.addPass(effectBloom);
         this.composer.addPass(renderRegular);
         this.composer.addPass(outputPass);
+
+        window.onresize = () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        };
     }
 
     public onAttach(engine: Engine): void {
@@ -96,7 +102,7 @@ class Renderer extends System {
         if (this.family) {
             for (const entity of this.family.entities) {
                 const positionComponent = entity.getComponent(PositionComponent);
-                const renderComponent = entity.getComponent(RenderComponent);
+                const renderComponent   = entity.getComponent(RenderComponent);
 
                 renderComponent.getMesh().position.copy(positionComponent.getPosition());
                 renderComponent.update(delta);
