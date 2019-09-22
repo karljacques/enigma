@@ -52,9 +52,20 @@
 
             const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 100; i++) {
                 const ship = shipFactory.createShip();
                 ship.getComponent(PositionComponent).setPosition(new Vector3(i, 0, 10));
+            }
+
+            for (let i = 0; i <50; i++) {
+                const ship = shipFactory.createShip(2);
+                ship.getComponent(PositionComponent).setPosition(new Vector3(i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+            }
+
+            for (let i = 0; i < 10; i++) {
+                const ship = shipFactory.createShip(3);
+                ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+
             }
 
             (new StarFactory(this.renderer, this.engine)).createStar(sunRadius);
