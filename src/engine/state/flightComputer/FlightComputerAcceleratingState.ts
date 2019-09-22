@@ -5,14 +5,17 @@ import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {VelocityComponent} from '@/engine/components/world/velocityComponent';
 import {FlightComputerTerminatingVelocityState} from '@/engine/state/flightComputer/FlightComputerTerminatingVelocityState';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
+import {Ship} from '@/engine/entities/ship';
 
 class FlightComputerAcceleratingState implements FlightComputerState {
-    public onEnter(entity: Entity): void {
+    public onEnter(entity: Ship): void {
         console.log('onEnter FlightComputerAcceleratingState');
         const target   = entity.getComponent(FlightComputerComponent).getTarget();
         const position = entity.getComponent(PositionComponent).getPosition();
 
-        const thrustVector = target.sub(position).normalize();
+        const acceleration = entity.enginePower / entity.mass;
+        const thrustVector = target.sub(position).normalize().multiplyScalar(acceleration);
+
         entity.getComponent(VelocityComponent).setAcceleration(thrustVector);
 
     }
@@ -21,13 +24,16 @@ class FlightComputerAcceleratingState implements FlightComputerState {
         console.log('onExit FlightComputerAcceleratingState');
     }
 
-    public update(entity: Entity, delta: number): FlightComputerState | null {
+    public update(entity: Ship, delta: number): FlightComputerState | null {
         const target   = entity.getComponent(FlightComputerComponent).getTarget();
         const position = entity.getComponent(PositionComponent).getPosition();
         const velocity = entity.getComponent(VelocityComponent).getVelocity();
 
         const displacement                 = target.distanceTo(position);
-        const maxThrustInOppositeDirection = (target.sub(position)).normalize();
+
+        const acceleration = entity.enginePower / entity.mass;
+
+        const maxThrustInOppositeDirection = (target.sub(position)).normalize().multiplyScalar(acceleration);
 
         const displacementRequiredToStop = velocity.lengthSq() / (2 * maxThrustInOppositeDirection.length());
         if (displacementRequiredToStop >= displacement) {

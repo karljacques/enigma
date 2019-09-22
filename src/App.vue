@@ -29,6 +29,7 @@
     import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
     import {Line2} from 'three/examples/jsm/lines/Line2';
     import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
+    import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent'
 
     @Component({
                    components: {ShaderLoader}
@@ -52,20 +53,26 @@
 
             const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            for (let i = 0; i < 100; i++) {
-                const ship = shipFactory.createShip();
-                ship.getComponent(PositionComponent).setPosition(new Vector3(i, 0, 10));
+            for (let i = 0; i < 10; i++) {
+                for (let y = 0; y < 10; y++) {
+                    const ship = shipFactory.createShip();
+                    ship.getComponent(PositionComponent).setPosition(new Vector3(i * 2, (Math.random() * 10) - 5, y * 2));
+                }
             }
 
             for (let i = 0; i <50; i++) {
                 const ship = shipFactory.createShip(2);
-                ship.getComponent(PositionComponent).setPosition(new Vector3(i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(-200 + i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+
+                ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
+
             }
 
             for (let i = 0; i < 10; i++) {
-                const ship = shipFactory.createShip(3);
+                const ship = shipFactory.createShip(3, 50000);
                 ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random()* 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 
+                ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
             }
 
             (new StarFactory(this.renderer, this.engine)).createStar(sunRadius);

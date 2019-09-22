@@ -16,20 +16,22 @@ class ShipFactory {
 
     }
 
-    public createShip(team: number = 1): Ship {
+    public createShip(team: number = 1, mass: number = 1000, enginePower: number = 1000): Ship {
         const ship = new Ship();
-        ship.team = team;
+        ship.team  = team;
 
         ship.name = shipNames[Math.floor(Math.random() * shipNames.length)];
 
         ship.putComponent(PositionComponent);
         ship.putComponent(RenderComponent);
         ship.putComponent(VelocityComponent);
+        ship.putComponent(FlightComputerComponent).initialise(ship);
+
+        ship.mass        = mass;
+        ship.enginePower = enginePower;
 
         if (team === 1) {
             ship.putComponent(ShipSelectableComponent);
-
-            ship.putComponent(FlightComputerComponent).initialise(ship);
         }
 
         let colour = 0xffffff;
