@@ -4,11 +4,12 @@ import {FlightComputerComponent} from '@/engine/components/ship/flightComputerCo
 import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {VelocityComponent} from '@/engine/components/world/velocityComponent';
 import {FlightComputerTerminatingVelocityState} from '@/engine/state/flightComputer/FlightComputerTerminatingVelocityState';
+import {RenderComponent} from '@/engine/components/render/renderComponent';
 
 class FlightComputerAcceleratingState implements FlightComputerState {
     public onEnter(entity: Entity): void {
         console.log('onEnter FlightComputerAcceleratingState');
-        const target = entity.getComponent(FlightComputerComponent).getTarget();
+        const target   = entity.getComponent(FlightComputerComponent).getTarget();
         const position = entity.getComponent(PositionComponent).getPosition();
 
         const thrustVector = target.sub(position).normalize();
@@ -21,11 +22,11 @@ class FlightComputerAcceleratingState implements FlightComputerState {
     }
 
     public update(entity: Entity, delta: number): FlightComputerState | null {
-        const target = entity.getComponent(FlightComputerComponent).getTarget();
+        const target   = entity.getComponent(FlightComputerComponent).getTarget();
         const position = entity.getComponent(PositionComponent).getPosition();
         const velocity = entity.getComponent(VelocityComponent).getVelocity();
 
-        const displacement = target.distanceTo(position);
+        const displacement                 = target.distanceTo(position);
         const maxThrustInOppositeDirection = (target.sub(position)).normalize();
 
         const displacementRequiredToStop = velocity.lengthSq() / (2 * maxThrustInOppositeDirection.length());

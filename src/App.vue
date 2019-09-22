@@ -18,14 +18,17 @@
     import {PositionComponent} from '@/engine/components/world/positionComponent';
     import ShaderLoader from '@/components/shaders/ShaderLoader.vue';
     import {StarFactory} from '@/engine/factories/starFactory';
-    import {Clock, Line, LineBasicMaterial, Vector3} from 'three';
+    import {Clock, Vector3} from 'three';
     import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
     import {CameraControlSystem} from '@/engine/systems/cameraControlSystem';
     import {EntitySelectionSystem} from '@/engine/systems/entitySelectionSystem';
     import {ShipMovementControlSystem} from '@/engine/systems/shipMovementControlSystem';
     import {FlightComputerProcessorSystem} from '@/engine/systems/flightComputerProcessorSystem';
-    import {engine} from '@/engine';
-    import {InputSystem} from '@/engine/systems/InputSystem';
+    import {engine, resetEngine} from '@/engine';
+    import {UserInputSystem} from '@/engine/systems/userInputSystem';
+    import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
+    import {Line2} from 'three/examples/jsm/lines/Line2';
+    import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
 
     @Component({
                    components: {ShaderLoader}
@@ -54,16 +57,17 @@
                 ship.getComponent(PositionComponent).setPosition(new Vector3(i, 0, 10));
             }
 
-            (new StarFactory(this.renderer, this.engine)).createStar(2);
+            (new StarFactory(this.renderer, this.engine)).createStar(sunRadius);
 
-            const circleFactory = new CircleGeometryFactory()
+            const circleFactory = new CircleGeometryFactory();
 
-            ;[25, 50, 75, 125].forEach((radius: number) => {
-                const geo = circleFactory.createCircleGeometry(radius, 100);
-                this.renderer.getScene().add(new Line(geo, new LineBasicMaterial({color: 0xFFFFFF})));
+            Object.values(solOrbitDistances).forEach((radius: number) => {
+                const geo      = circleFactory.createCircleGeometry(radius, 100);
+                const material = LineMaterialFactory.buildDottedMaterial(0xFFFFFF, 5);
+                this.renderer.getScene().add(new Line2(geo, material));
             });
 
-            const inputSystem = new InputSystem(this.renderer.getCamera());
+            const inputSystem = new UserInputSystem(this.renderer.getCamera());
             this.engine.addSystem(inputSystem);
 
             const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(), circleFactory, inputSystem);
@@ -76,7 +80,9 @@
 
             this.engine.addSystem(new FlightComputerProcessorSystem());
 
-            const cameraControl = new CameraControlSystem(this.renderer.getCamera());
+            const cameraControl = new CameraControlSystem(this.renderer.getCamera(), inputSystem);
+            inputSystem.addEventListener(cameraControl);
+
             this.engine.addSystem(cameraControl);
 
             const clock   = new Clock;
@@ -86,6 +92,11 @@
                 requestAnimationFrame(animate);
             };
             animate();
+        }
+
+        public beforeDestroy() {
+            console.log('destroy');
+            resetEngine();
         }
     }
 </script>

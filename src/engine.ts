@@ -1,5 +1,9 @@
 import {Engine} from '@nova-engine/ecs';
 
-const engine = new Engine();
+let engine = new Engine();
 
-export {engine};
+let resetEngine = () => {
+    engine = new Engine();
+};
+
+export {engine, resetEngine};

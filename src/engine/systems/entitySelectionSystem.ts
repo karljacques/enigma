@@ -1,12 +1,14 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Line, LineBasicMaterial, Scene} from 'three';
+import {Scene} from 'three';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {InputEventListener} from '@/engine/systems/input/inputEventListener';
 import {WorldMouseEvent} from '@/engine/systems/input/WorldMouseEvent';
-import {InputSystem} from '@/engine/systems/InputSystem';
+import {UserInputSystem} from '@/engine/systems/userInputSystem';
+import {Line2} from 'three/examples/jsm/lines/Line2';
+import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
 
 class EntitySelectionSystem extends System implements InputEventListener {
     protected family?: Family;
@@ -14,7 +16,7 @@ class EntitySelectionSystem extends System implements InputEventListener {
 
     constructor(protected scene: Scene,
                 protected circleGeometryFactory: CircleGeometryFactory,
-                protected inputSystem: InputSystem,
+                protected inputSystem: UserInputSystem,
     ) {
         super();
     }
@@ -81,9 +83,17 @@ class EntitySelectionSystem extends System implements InputEventListener {
         selectableComponent.select();
 
         if (selectableComponent.selectionIndicatorObject === null) {
-            const geometry                               = this.circleGeometryFactory.createCircleGeometry(0.75);
-            selectableComponent.selectionIndicatorObject = new Line(geometry, new LineBasicMaterial({color: 0x0000FF}));
-            this.scene.add(selectableComponent.selectionIndicatorObject);
+            const geometry = this.circleGeometryFactory.createCircleGeometry(0.75);
+
+            const material = LineMaterialFactory.buildDottedMaterial(0x0011ee, 10);
+
+            const line = new Line2(geometry, material);
+            line.computeLineDistances();
+            line.scale.set(1, 1, 1);
+
+            selectableComponent.selectionIndicatorObject = line;
+
+            this.scene.add(line);
         }
     }
 

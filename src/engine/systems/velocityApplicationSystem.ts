@@ -1,6 +1,7 @@
 import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
 import {VelocityComponent} from '@/engine/components/world/velocityComponent';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
+import {speedOfLight} from '@/engine/scalingHelper';
 
 class VelocityApplicationSystem extends System {
 
@@ -18,8 +19,12 @@ class VelocityApplicationSystem extends System {
                 const velocityComponent = entity.getComponent(VelocityComponent);
                 const positionComponent = entity.getComponent(PositionComponent);
 
-                const newVelocity = velocityComponent.getVelocity()
+                let newVelocity = velocityComponent.getVelocity()
                     .add(velocityComponent.getAcceleration().multiplyScalar(delta));
+
+                if (newVelocity.length() > speedOfLight * 0.1) {
+                    newVelocity = newVelocity.normalize().multiplyScalar(speedOfLight * 0.1);
+                }
 
                 velocityComponent.setVelocity(newVelocity);
 

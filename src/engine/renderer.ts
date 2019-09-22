@@ -28,7 +28,7 @@ class Renderer extends System {
         this.scene = new Scene();
         this.starScene = new Scene();
 
-        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 30000);
         this.camera.position.set(0.5, 20, 20);
         this.camera.lookAt(new Vector3(0, 1, 0));
 
@@ -103,7 +103,7 @@ class Renderer extends System {
 
             }
         }
-
+        this.camera.updateProjectionMatrix();
         this.composer.render(delta);
     }
 

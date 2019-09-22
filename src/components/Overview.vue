@@ -1,18 +1,19 @@
 <template>
     <v-row>
         <v-col>
-            <v-card>
-                <h1>Overview</h1>
-                <div>
-                    <h4>Selected Ships</h4>
+            <v-card v-if="selected.length">
+                <v-card-title>Selected Ships</v-card-title>
+                <v-card-text>
                     <ul>
                         <li v-for="entity in selected">
                             {{ entity.name }}
                         </li>
                     </ul>
-                </div>
+                </v-card-text>
             </v-card>
         </v-col>
+        ♦
+        <v-spacer/>
         <v-spacer/>
         <v-spacer/>
         <v-spacer/>
@@ -32,7 +33,13 @@
         protected entities: Array<Entity> = [];
 
         created() {
+            console.log('created');
+
+            engine.entities.forEach((entity: Entity) => {
+                this.entities.push(entity);
+            });
             engine.addEntityListener(this);
+
         }
 
         get selectables() {
@@ -48,6 +55,7 @@
         }
 
         onEntityAdded(entity: Entity): void {
+            console.log('onEntityAdded');
             this.entities.push(entity);
         }
 
@@ -63,7 +71,5 @@
 </script>
 
 <style scoped>
-    * {
-        color: white;
-    }
+
 </style>
