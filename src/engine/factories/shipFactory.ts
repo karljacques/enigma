@@ -10,7 +10,7 @@ import {FlightComputerComponent} from '@/engine/components/ship/flightComputerCo
 import shipNames from './../entities/ship/nameList';
 import {HealthComponent} from '@/engine/components/ship/healthComponent';
 import {LoadoutComponent} from '@/engine/components/ship/LoadoutComponent';
-import {Weapon} from '@/engine/class/weapon';
+import {LaserWeapon} from '@/engine/class/laserWeapon';
 import {AU} from '@/engine/scalingHelper';
 
 class ShipFactory {
@@ -34,7 +34,7 @@ class ShipFactory {
 
         const loadout = ship.putComponent(LoadoutComponent);
 
-        const weapon = new Weapon(50, 50, 0.1 * AU, 1000);
+        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
         loadout.weapons.push(weapon);
 
         ship.mass        = mass;

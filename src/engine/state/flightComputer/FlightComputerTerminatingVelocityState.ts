@@ -21,7 +21,7 @@ class FlightComputerTerminatingVelocityState implements FlightComputerState {
     }
 
     public onEnter(entity: Entity): void {
-        console.log('onEnter FlightComputerTerminatingVelocityState');
+        // console.log('onEnter FlightComputerTerminatingVelocityState');
         const velocityComponent = entity.getComponent(VelocityComponent);
 
         const velocity = velocityComponent.getVelocity();
@@ -31,7 +31,7 @@ class FlightComputerTerminatingVelocityState implements FlightComputerState {
     }
 
     public onExit(entity: Entity): void {
-        console.log('onExit FlightComputerTerminatingVelocityState');
+        // console.log('onExit FlightComputerTerminatingVelocityState');
         const velocityComponent = entity.getComponent(VelocityComponent);
 
         velocityComponent.setAcceleration(new Vector3(0, 0, 0));

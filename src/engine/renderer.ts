@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {Camera, PerspectiveCamera, Scene, Vector3, WebGLRenderer} from 'three';
-import {Engine, Family, FamilyBuilder, System} from '@nova-engine/ecs';
+import {Engine, EngineEntityListener, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -9,8 +9,10 @@ import {ClearPass} from 'three/examples/jsm/postprocessing/ClearPass';
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import {CopyShader} from 'three/examples/jsm/shaders/CopyShader';
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+import {BloomRenderComponent} from '@/engine/components/render/bloomRenderComponent';
 
-class Renderer extends System {
+class Renderer extends System implements EngineEntityListener {
+
     protected camera: PerspectiveCamera;
 
     protected scene: Scene;
@@ -75,8 +77,29 @@ class Renderer extends System {
         };
     }
 
+    public onEntityAdded(entity: Entity): void {
+        if (entity.hasComponent(RenderComponent)) {
+            const renderComponent = entity.getComponent(RenderComponent);
+
+            if (renderComponent instanceof BloomRenderComponent) {
+                this.starScene.add(renderComponent.getMesh());
+            } else {
+                this.scene.add(renderComponent.getMesh());
+            }
+
+        }
+    }
+
+    public onEntityRemoved(entity: Entity): void {
+        if (entity.hasComponent(RenderComponent)) {
+            this.scene.remove(entity.getComponent(RenderComponent).getMesh());
+            this.starScene.remove(entity.getComponent(RenderComponent).getMesh());
+        }
+    }
+
     public onAttach(engine: Engine): void {
         super.onAttach(engine);
+        engine.addEntityListener(this);
 
         this.family = new FamilyBuilder(engine).include(RenderComponent).build();
     }

@@ -17,6 +17,19 @@ class LineMaterialFactory {
 
         return material;
     }
+
+    public static buildSolidMaterial(colour: number, lineWidth: number): LineMaterial {
+        const material = new LineMaterial(
+            {
+                color:     colour,
+                linewidth: lineWidth,
+                dashed:    false,
+            });
+
+        material.resolution.set(window.innerWidth, window.innerHeight);
+
+        return material;
+    }
 }
 
 export {LineMaterialFactory};

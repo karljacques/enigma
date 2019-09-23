@@ -1,10 +1,9 @@
-import {RenderComponent} from '@/engine/components/render/renderComponent';
+import {BloomRenderComponent} from '@/engine/components/render/bloomRenderComponent';
 
-class StarRenderComponent extends RenderComponent {
-
+class StarRenderComponent extends BloomRenderComponent {
     public update(delta: number): void {
-        this.uniforms.time.value += 1.0 * delta
+        this.uniforms.time.value += delta;
     }
 }
 
-export {StarRenderComponent}
+export {StarRenderComponent};

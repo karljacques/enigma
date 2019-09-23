@@ -1,15 +1,15 @@
 import {Component,} from '@nova-engine/ecs';
-import {Weapon} from '@/engine/class/weapon';
+import {LaserWeapon} from '@/engine/class/laserWeapon';
 
 class LoadoutComponent implements Component {
-    private _weapons: Weapon[] = [];
+    private _weapons: LaserWeapon[] = [];
 
 
-    public get weapons(): Weapon[] {
+    public get weapons(): LaserWeapon[] {
         return this._weapons;
     }
 
-    public set weapons(value: Weapon[]) {
+    public set weapons(value: LaserWeapon[]) {
         this._weapons = value;
     }
 }

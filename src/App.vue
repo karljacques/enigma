@@ -30,7 +30,9 @@
     import {Line2} from 'three/examples/jsm/lines/Line2';
     import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
     import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
-    import {AutomatedFiringSystem} from '@/engine/systems/automatedFiringSystem'
+    import {AutomatedFiringSystem} from '@/engine/systems/automatedFiringSystem';
+    import {LaserHandlingSystem} from '@/engine/systems/combat/weapons/laserHandlingSystem';
+    import {HealthMonitoringSystem} from '@/engine/systems/combat/healthMonitoringSystem';
 
     @Component({
                    components: {ShaderLoader}
@@ -57,19 +59,19 @@
             for (let i = 0; i < 10; i++) {
                 for (let y = 0; y < 10; y++) {
                     const ship = shipFactory.createShip();
-                    ship.getComponent(PositionComponent).setPosition(new Vector3(150 + (i * 2), (Math.random() * 10) - 5, y * 2));
+                    ship.getComponent(PositionComponent).setPosition(new Vector3(15 + (i * 2), (Math.random() * 10) - 5, y * 2));
                 }
             }
 
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 200; i++) {
                 const ship = shipFactory.createShip(2);
                 ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 10 + Math.random() * 20.0));
 
-                ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
+                // ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
 
             }
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 200; i++) {
                 const ship = shipFactory.createShip(3, 50000);
                 ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 
@@ -100,7 +102,7 @@
 
             this.engine.addSystem(new AutomatedFiringSystem());
 
-            const shipMovementControlSystem = new ShipMovementControlSystem(this.renderer.getScene());
+            const shipMovementControlSystem = new ShipMovementControlSystem();
             this.engine.addSystem(shipMovementControlSystem);
             inputSystem.addEventListener(shipMovementControlSystem);
 
@@ -108,6 +110,12 @@
 
             const cameraControl = new CameraControlSystem(this.renderer.getCamera(), inputSystem);
             inputSystem.addEventListener(cameraControl);
+
+            const laserHandlingSystem = new LaserHandlingSystem();
+            this.engine.addSystem(laserHandlingSystem);
+
+            const healthMonitoringSystem = new HealthMonitoringSystem();
+            this.engine.addSystem(healthMonitoringSystem);
 
             this.engine.addSystem(cameraControl);
 

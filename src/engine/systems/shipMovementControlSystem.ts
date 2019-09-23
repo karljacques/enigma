@@ -1,5 +1,5 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Mesh, MeshBasicMaterial, Scene, SphereGeometry, Vector2, Vector3} from 'three';
+import {Mesh, MeshBasicMaterial, SphereGeometry, Vector3} from 'three';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
 import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
 import {InputEventListener} from '@/engine/systems/input/inputEventListener';
@@ -8,10 +8,6 @@ import {PositionComponent} from '@/engine/components/world/positionComponent';
 
 class ShipMovementControlSystem extends System implements InputEventListener {
     protected selectables!: Family;
-
-    constructor(protected scene: Scene) {
-        super();
-    }
 
     public onAttach(engine: Engine): void {
         this.selectables = new FamilyBuilder(engine).include(SelectableComponent).build();
@@ -56,7 +52,6 @@ class ShipMovementControlSystem extends System implements InputEventListener {
                     const mesh     = new Mesh(geometry, material);
 
                     mesh.position.copy(event.intersect);
-                    this.scene.add(mesh);
                 }
             }
         });
