@@ -128,7 +128,7 @@ class Renderer extends System implements EngineEntityListener {
                 const renderComponent   = entity.getComponent(RenderComponent);
 
                 renderComponent.getMesh().position.copy(positionComponent.getPosition());
-                renderComponent.update(delta);
+                renderComponent.update(delta, this.camera);
 
             }
         }

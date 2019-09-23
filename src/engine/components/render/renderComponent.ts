@@ -1,5 +1,5 @@
 import {Component} from '@nova-engine/ecs';
-import {Mesh} from 'three';
+import {Camera, Mesh} from 'three';
 
 class RenderComponent implements Component {
     public static tag = 'RenderComponent';
@@ -16,7 +16,7 @@ class RenderComponent implements Component {
         return this.mesh;
     }
 
-    public update(delta: number): void {
+    public update(delta: number, camera: Camera): void {
 
     }
 }
