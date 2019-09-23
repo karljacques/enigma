@@ -95,12 +95,16 @@ class UserInputSystem extends System {
         const key = event.key.toLowerCase();
 
         this.keymap[key] = false;
+
+        this.dispatch('keyup', event);
     }
 
     protected onKeyDown(event: KeyboardEvent): void {
         const key = event.key.toLowerCase();
 
         this.keymap[key] = true;
+
+        this.dispatch('keydown', event);
     }
 
     protected onMouseDown(event: MouseEvent): void {
@@ -132,7 +136,7 @@ class UserInputSystem extends System {
 
     protected onMouseMove(event: MouseEvent): void {
         event.preventDefault();
-        
+
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 

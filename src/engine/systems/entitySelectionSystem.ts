@@ -18,6 +18,8 @@ class EntitySelectionSystem extends System implements InputEventListener, Engine
 
     protected selectionMarkerTracker!: SelectionMarkerTracker;
 
+    protected selectionGroups: Record<number, Entity[]> = {};
+
     constructor(protected scene: Scene,
                 protected camera: Camera,
                 protected renderer: WebGLRenderer,
@@ -52,6 +54,10 @@ class EntitySelectionSystem extends System implements InputEventListener, Engine
         if (type === 'mousemove') {
             this.onMouseMove(event as MouseEvent);
         }
+
+        if (type === 'keydown') {
+            this.onKeyDown(event as KeyboardEvent);
+        }
     }
 
     public onEntityAdded(entity: Entity): void {
@@ -60,6 +66,34 @@ class EntitySelectionSystem extends System implements InputEventListener, Engine
     public onEntityRemoved(entity: Entity): void {
         if (entity.hasComponent(SelectableComponent)) {
             this.deselectEntity(entity);
+        }
+    }
+
+    public onKeyDown(event: KeyboardEvent) {
+        console.log(event.key);
+        if (!isNaN(Number(event.key))) {
+            if (this.inputSystem.isKeyPressed('Control')) {
+                event.preventDefault();
+                this.createNewGroup(Number(event.key));
+            } else {
+                this.selectGroup(Number(event.key));
+            }
+        }
+    }
+
+    protected createNewGroup(group: number) {
+        this.selectionGroups[group] = this.selectables.entities.filter((entity: Entity) => {
+            return entity.getComponent(SelectableComponent).isSelected();
+        });
+    }
+
+    protected selectGroup(group: number) {
+        this.unselectAllSelected();
+
+        if (group in this.selectionGroups) {
+            this.selectionGroups[group].forEach((entity: Entity) => {
+                this.selectEntity(entity);
+            });
         }
     }
 
