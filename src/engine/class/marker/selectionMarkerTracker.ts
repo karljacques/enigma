@@ -2,8 +2,8 @@ import {Engine, EngineEntityListener, Entity} from '@nova-engine/ecs';
 import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
 import {Line2} from 'three/examples/jsm/lines/Line2';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
-import {BloomRenderComponent} from '@/engine/components/render/bloomRenderComponent';
 import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
+import {SelectionMarkerRenderComponent} from '@/engine/components/render/selectionMarkerRenderComponent';
 
 class SelectionMarkerTracker implements EngineEntityListener {
     protected selectionMarkerMap: Map<Entity, Entity> = new Map();
@@ -32,7 +32,7 @@ class SelectionMarkerTracker implements EngineEntityListener {
 
             selectionMarker.putComponent(PositionComponent)
                 .setPositionReference(entity.getComponent(PositionComponent).getPositionReference());
-            selectionMarker.putComponent(BloomRenderComponent).mesh = line;
+            selectionMarker.putComponent(SelectionMarkerRenderComponent).mesh = line;
 
             this.engine.addEntity(selectionMarker);
             this.selectionMarkerMap.set(entity, selectionMarker);

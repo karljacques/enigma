@@ -6,7 +6,7 @@ class RenderComponent implements Component {
 
     public uniforms: any;
 
-    public mesh?: Mesh;
+    public mesh!: Mesh;
 
     public getMesh(): Mesh {
         if (!this.mesh) {
