@@ -1,28 +1,26 @@
-import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
-import {Camera, Renderer, Scene, WebGLRenderer} from 'three';
+import {Engine, EngineEntityListener, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
+import {Camera, Scene, WebGLRenderer} from 'three';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
-import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
-import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {InputEventListener} from '@/engine/systems/input/inputEventListener';
 import {WorldMouseEvent} from '@/engine/systems/input/WorldMouseEvent';
 import {UserInputSystem} from '@/engine/systems/userInputSystem';
-import {Line2} from 'three/examples/jsm/lines/Line2';
-import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
 import {SelectionBox} from 'three/examples/jsm/interactive/SelectionBox';
 import {SelectionHelper} from '@/engine/systems/input/selectionHelper';
+import {SelectionMarkerTracker} from '@/engine/class/marker/selectionMarkerTracker';
 
-class EntitySelectionSystem extends System implements InputEventListener {
+class EntitySelectionSystem extends System implements InputEventListener, EngineEntityListener {
     protected family!: Family;
     protected selectables!: Family;
 
     protected selectionBox!: SelectionBox;
     protected selectionHelper!: SelectionHelper;
 
+    protected selectionMarkerTracker!: SelectionMarkerTracker;
+
     constructor(protected scene: Scene,
                 protected camera: Camera,
                 protected renderer: WebGLRenderer,
-                protected circleGeometryFactory: CircleGeometryFactory,
                 protected inputSystem: UserInputSystem,
     ) {
         super();
@@ -36,19 +34,12 @@ class EntitySelectionSystem extends System implements InputEventListener {
 
         this.selectionBox    = new SelectionBox(this.camera, this.scene);
         this.selectionHelper = new SelectionHelper(this.selectionBox, this.renderer, 'selectBox');
+
+        this.selectionMarkerTracker = new SelectionMarkerTracker(engine);
+        engine.addEntityListener(this.selectionMarkerTracker);
     }
 
     public update(engine: Engine, delta: number): void {
-        // Move selection indicators accordingly
-        if (this.selectables) {
-            this.selectables.entities.forEach((entity: Entity) => {
-                const selectionComponent = entity.getComponent(SelectableComponent);
-                if (selectionComponent.selectionIndicatorObject) {
-                    const positionComponent = entity.getComponent(PositionComponent);
-                    selectionComponent.selectionIndicatorObject.position.copy(positionComponent.getPosition());
-                }
-            });
-        }
     }
 
     public onInputEvent(type: string, event: Event): void {
@@ -60,6 +51,15 @@ class EntitySelectionSystem extends System implements InputEventListener {
 
         if (type === 'mousemove') {
             this.onMouseMove(event as MouseEvent);
+        }
+    }
+
+    public onEntityAdded(entity: Entity): void {
+    }
+
+    public onEntityRemoved(entity: Entity): void {
+        if (entity.hasComponent(SelectableComponent)) {
+            this.deselectEntity(entity);
         }
     }
 
@@ -125,24 +125,11 @@ class EntitySelectionSystem extends System implements InputEventListener {
     protected selectEntity(entity: Entity): void {
         const selectableComponent = entity.getComponent(SelectableComponent);
 
-        selectableComponent.select();
-
-        if (selectableComponent.selectionIndicatorObject === null) {
-            const geometry = this.circleGeometryFactory.createCircleGeometry(0.75);
-
-            const material = LineMaterialFactory.buildDottedMaterial(0x0011ee, 10);
-
-            const line = new Line2(geometry, material);
-            line.computeLineDistances();
-            line.scale.set(1, 1, 1);
-
-            selectableComponent.selectionIndicatorObject = line;
-
-            const position = entity.getComponent(PositionComponent).getPosition();
-            line.position.copy(position);
-
-            this.scene.add(line);
+        if (!selectableComponent.isSelected()) {
+            this.selectionMarkerTracker.onEntitySelection(entity);
         }
+
+        selectableComponent.select();
     }
 
     protected deselectEntity(entity: Entity): void {
@@ -150,10 +137,7 @@ class EntitySelectionSystem extends System implements InputEventListener {
 
         selectableComponent.deselect();
 
-        if (selectableComponent.selectionIndicatorObject !== null) {
-            this.scene.remove(selectableComponent.selectionIndicatorObject);
-            selectableComponent.selectionIndicatorObject = null;
-        }
+        this.selectionMarkerTracker.onEntityDeselection(entity);
     }
 
     protected unselectAllSelected() {

@@ -65,7 +65,7 @@
 
             for (let i = 0; i < 50; i++) {
                 const ship = shipFactory.createShip(2);
-                ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 10 + Math.random() * 20.0));
+                ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 
                 // ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
 
@@ -83,7 +83,7 @@
             const circleFactory = new CircleGeometryFactory();
 
             Object.values(solOrbitDistances).forEach((radius: number) => {
-                const geo      = circleFactory.createCircleGeometry(radius, 100);
+                const geo      = CircleGeometryFactory.createCircleGeometry(radius, 100);
                 const material = LineMaterialFactory.buildDottedMaterial(0xFFFFFF, 5);
                 this.renderer.getScene().add(new Line2(geo, material));
             });
@@ -95,7 +95,6 @@
             const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(),
                                                                     this.renderer.getCamera(),
                                                                     this.renderer.getRenderer(),
-                                                                    circleFactory,
                                                                     inputSystem);
             this.engine.addSystem(entitySelectionSystem);
             inputSystem.addEventListener(entitySelectionSystem);

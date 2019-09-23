@@ -1,8 +1,7 @@
-import {Geometry, Vector3} from 'three';
 import {LineGeometry} from 'three/examples/jsm/lines/LineGeometry';
 
 class CircleGeometryFactory {
-    public createCircleGeometry(radius: number, segments: number = 64): LineGeometry {
+    public static createCircleGeometry(radius: number, segments: number = 64): LineGeometry {
 
         const geometry = new LineGeometry();
         const vertices = [];

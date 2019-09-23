@@ -29,6 +29,7 @@ class SelectableComponent implements Component {
 
     protected onSelection() {
         console.log('Generic Selection');
+
     }
 
     protected onDeselection() {

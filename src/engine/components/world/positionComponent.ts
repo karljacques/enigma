@@ -12,6 +12,14 @@ class PositionComponent implements Component {
     public setPosition(value: Vector3) {
         this.position.copy(value);
     }
+
+    public setPositionReference(position: Vector3): void {
+        this.position = position;
+    }
+
+    public getPositionReference(): Vector3 {
+        return this.position;
+    }
 }
 
 export {PositionComponent};

@@ -1,6 +1,5 @@
 import {Engine, Entity, Family, FamilyBuilder, System} from '@nova-engine/ecs';
 import {LoadoutComponent} from '@/engine/components/ship/LoadoutComponent';
-import {HealthComponent} from '@/engine/components/ship/healthComponent';
 import {Ship} from '@/engine/entities/ship';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {LaserWeapon} from '@/engine/class/laserWeapon';
@@ -16,7 +15,6 @@ class AutomatedFiringSystem extends System {
 
     public onAttach(engine: Engine): void {
         this.loadoutFamily = new FamilyBuilder(engine).include(LoadoutComponent).build();
-        this.damagables    = new FamilyBuilder(engine).include(HealthComponent).build();
     }
 
     public update(engine: Engine, delta: number): void {
