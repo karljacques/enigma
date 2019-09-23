@@ -63,7 +63,7 @@
                 }
             }
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 50; i++) {
                 const ship = shipFactory.createShip(2);
                 ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 10 + Math.random() * 20.0));
 
@@ -71,7 +71,7 @@
 
             }
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 50; i++) {
                 const ship = shipFactory.createShip(3, 50000);
                 ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
 

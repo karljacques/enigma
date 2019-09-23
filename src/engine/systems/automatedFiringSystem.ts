@@ -3,12 +3,10 @@ import {LoadoutComponent} from '@/engine/components/ship/LoadoutComponent';
 import {HealthComponent} from '@/engine/components/ship/healthComponent';
 import {Ship} from '@/engine/entities/ship';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
-import {AU} from '@/engine/scalingHelper';
 import {LaserWeapon} from '@/engine/class/laserWeapon';
 
 class AutomatedFiringSystem extends System {
     protected loadoutFamily!: Family;
-    protected damagables!: Family;
 
     protected readonly targetTeams: Record<number, number[]> = {
         1: [2],
@@ -22,31 +20,18 @@ class AutomatedFiringSystem extends System {
     }
 
     public update(engine: Engine, delta: number): void {
+        // TODO: Look at spacial partitioning
         this.loadoutFamily.entities.forEach((entity: Entity) => {
             if (entity instanceof Ship) {
-                const attackerPosition = entity.getComponent(PositionComponent).getPosition();
-                const targets          = this.getDamagablesInTeams(this.targetTeams[entity.team]);
-
-                targets.forEach((defender: Entity) => {
-                    const defenderPosition = defender.getComponent(PositionComponent).getPosition();
-
-                    if (attackerPosition.manhattanDistanceTo(defenderPosition) < AU) {
-                        this.fireWeapons(engine, entity, defender);
+                this.loadoutFamily.entities.forEach((target: Entity) => {
+                    if (target instanceof Ship) {
+                        if (this.targetTeams[entity.team].includes(target.team)) {
+                            this.fireWeapons(engine, entity, target);
+                        }
                     }
                 });
             }
         });
-    }
-
-    protected getDamagablesInTeams(teams: number[]): Entity[] {
-        return this.damagables.entities.filter((x: Entity) => {
-            if (x instanceof Ship) {
-                return teams.includes(x.team);
-            }
-
-            return false;
-        });
-
     }
 
     protected fireWeapons(engine: Engine, attacker: Entity, defender: Entity) {
@@ -56,7 +41,7 @@ class AutomatedFiringSystem extends System {
                 const defenderPosition = defender.getComponent(PositionComponent).getPosition();
                 const attackerPosition = attacker.getComponent(PositionComponent).getPosition();
 
-                if (attackerPosition.distanceTo(defenderPosition) < weapon.range) {
+                if (attackerPosition.distanceToSquared(defenderPosition) < (weapon.range * weapon.range)) {
                     weapon.fire(attacker, defender);
                 }
             }
