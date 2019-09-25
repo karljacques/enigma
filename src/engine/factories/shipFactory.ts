@@ -20,7 +20,7 @@ class ShipFactory {
 
     }
 
-    public createShip(team: number = 1, mass: number = 1000, enginePower: number = 1000): Ship {
+    public createShip(team: number = 1, type: string): Ship {
         const ship = new Ship();
         ship.team  = team;
 
@@ -31,14 +31,6 @@ class ShipFactory {
         ship.putComponent(VelocityComponent);
         ship.putComponent(FlightComputerComponent).initialise(ship);
         ship.putComponent(HealthComponent);
-
-        const loadout = ship.putComponent(LoadoutComponent);
-
-        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
-        loadout.weapons.push(weapon);
-
-        ship.mass        = mass;
-        ship.enginePower = enginePower;
 
         if (team === 1) {
             ship.putComponent(ShipSelectableComponent);
@@ -58,20 +50,87 @@ class ShipFactory {
                 break;
         }
 
-        const geometry = new THREE.ConeGeometry(0.25, 1, 32);
+        ship.id = this.id;
+        this.id++;
+
+        switch (type) {
+            case 'battleship':
+                this.createBattleship(ship, colour);
+                break;
+            case 'battlecruiser':
+                this.createBattlecruiser(ship, colour);
+                break;
+            case 'destroyer':
+                this.createDestroyer(ship, colour);
+                break;
+        }
+
+        return ship;
+    }
+
+    protected createBattleship(ship: Ship, colour: number) {
+        ship.mass        = 18000;
+        ship.enginePower = 10000;
+
+        const geometry = new THREE.CylinderGeometry(0.25, 0.25, 1);
+
+        geometry.rotateX(Math.PI / 2);
+
+        const material = new THREE.MeshBasicMaterial({color: colour});
+        const mesh     = new THREE.Mesh(geometry, material);
+
+        ship.getComponent(RenderComponent).mesh = mesh;
+
+        ship.getComponent(HealthComponent).hull = 1000;
+
+        const loadout = ship.putComponent(LoadoutComponent);
+
+        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        loadout.weapons.push(weapon);
+
+        const fastLaser = new LaserWeapon(20, 50, 0.2 * AU, 500);
+        loadout.weapons.push(fastLaser);
+    }
+
+    protected createBattlecruiser(ship: Ship, colour: number) {
+
+        ship.mass        = 12000;
+        ship.enginePower = 8000;
+        const geometry   = new THREE.BoxGeometry(0.25, 0.25, 1);
+
+        ship.getComponent(HealthComponent).hull = 500;
+
+
+        const material = new THREE.MeshBasicMaterial({color: colour});
+        const mesh     = new THREE.Mesh(geometry, material);
+
+        ship.getComponent(RenderComponent).mesh = mesh;
+
+
+        const loadout = ship.putComponent(LoadoutComponent);
+
+        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        loadout.weapons.push(weapon);
+
+    }
+
+    protected createDestroyer(ship: Ship, colour: number) {
+
+        ship.mass        = 1000;
+        ship.enginePower = 1000;
+
+        const geometry = new THREE.ConeGeometry(0.1, 0.7, 32);
         geometry.rotateX(Math.PI / 2);
         const material = new THREE.MeshBasicMaterial({color: colour});
         const mesh     = new THREE.Mesh(geometry, material);
 
         ship.getComponent(RenderComponent).mesh = mesh;
 
-        this.renderer.getScene().add(mesh);
-        this.engine.addEntity(ship);
+        const loadout = ship.putComponent(LoadoutComponent);
 
-        ship.id = this.id;
-        this.id++;
+        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        loadout.weapons.push(weapon);
 
-        return ship;
     }
 }
 

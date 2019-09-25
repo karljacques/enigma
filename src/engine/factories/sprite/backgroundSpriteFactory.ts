@@ -1,12 +1,9 @@
-import {Renderer} from '@/engine/renderer';
-import {RepeatWrapping, TextureLoader} from 'three';
+import {RepeatWrapping, Texture, TextureLoader} from 'three';
 
 class BackgroundSpriteFactory {
-    constructor(protected renderer: Renderer) {
 
-    }
 
-    public createBackgroundSprite(textureName: string): void {
+    public static createBackgroundSprite(textureName: string): Texture {
 
         const bgTexture = new TextureLoader().load(textureName);
 
@@ -15,7 +12,8 @@ class BackgroundSpriteFactory {
 
         bgTexture.repeat.x = 1.2;
         bgTexture.repeat.y = 1.2;
-        this.renderer.getScene().background = bgTexture;
+
+        return bgTexture;
     }
 }
 

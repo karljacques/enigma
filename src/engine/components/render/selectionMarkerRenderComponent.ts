@@ -1,7 +1,7 @@
-import {BloomRenderComponent} from '@/engine/components/render/bloomRenderComponent';
 import {Camera} from 'three';
+import {RenderComponent} from '@/engine/components/render/renderComponent';
 
-class SelectionMarkerRenderComponent extends BloomRenderComponent {
+class SelectionMarkerRenderComponent extends RenderComponent {
     public update(delta: number, camera: Camera): void {
         super.update(delta, camera);
 
