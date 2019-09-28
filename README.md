@@ -1,4 +1,6 @@
-# client
+# Enigma
+
+Right now, this project is just a clientside prototype. 
 
 ## Project setup
 ```
