@@ -34,6 +34,8 @@
     import {HealthMonitoringSystem} from '@/engine/systems/combat/healthMonitoringSystem';
     import {BackgroundSpriteFactory} from '@/engine/factories/sprite/backgroundSpriteFactory';
     import {SolarSystemScaling} from "@/engine/scalingHelper";
+    import {EventBus} from "@/eventBus";
+    import {EntityScreenPositionIndicatorSystem} from "@/engine/systems/ui/entityScreenPositionIndicatorSystem";
 
     @Component({
         components: {ShaderLoader}
@@ -57,38 +59,39 @@
 
             const shipFactory = new ShipFactory(this.renderer, this.engine);
 
-            for (let i = 0; i < 10; i++) {
-                for (let y = 0; y < 10; y++) {
+            for (let i = 0; i <5; i++) {
+                for (let y = 0; y <5; y++) {
                     const type = (['battlecruiser', 'battleship', 'destroyer'])[Math.floor(Math.random() * 3)];
 
                     const ship = shipFactory.createShip(1, type);
                     engine.addEntity(ship);
+
                     ship.getComponent(PositionComponent).setPosition(new Vector3(15 + (i * 2), (Math.random() * 10) - 5, y * 2));
                 }
             }
 
-            for (let i = 0; i < 50; i++) {
-                const type = (['battlecruiser', 'battleship', 'destroyer'])[Math.floor(Math.random() * 3)];
-
-                const ship = shipFactory.createShip(2, type);
-                engine.addEntity(ship);
-
-                ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
-
-                // ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
-
-            }
-
-            for (let i = 0; i < 50; i++) {
-                const type = (['battlecruiser', 'battleship', 'destroyer'])[Math.floor(Math.random() * 3)];
-
-                const ship = shipFactory.createShip(3, type);
-                engine.addEntity(ship);
-
-                ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
-
-                ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
-            }
+            // for (let i = 0; i < 50; i++) {
+            //     const type = (['battlecruiser', 'battleship', 'destroyer'])[Math.floor(Math.random() * 3)];
+            //
+            //     const ship = shipFactory.createShip(2, type);
+            //     engine.addEntity(ship);
+            //
+            //     ship.getComponent(PositionComponent).setPosition(new Vector3(-20 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+            //
+            //     // ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
+            //
+            // }
+            //
+            // for (let i = 0; i < 50; i++) {
+            //     const type = (['battlecruiser', 'battleship', 'destroyer'])[Math.floor(Math.random() * 3)];
+            //
+            //     const ship = shipFactory.createShip(3, type);
+            //     engine.addEntity(ship);
+            //
+            //     ship.getComponent(PositionComponent).setPosition(new Vector3(100 + i + Math.random() * 20, (Math.random() * 10.0) - 5, 100 + Math.random() * 20.0));
+            //
+            //     ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
+            // }
 
             (new StarFactory(this.renderer, this.engine)).createStar(SolarSystemScaling.sunRadius);
 
@@ -132,6 +135,9 @@
             const starBackground = BackgroundSpriteFactory.createBackgroundSprite('textures/stars.png');
 
             this.renderer.getStarScene().background = starBackground;
+
+            const entityScreenPositionIndicatorSystem = new EntityScreenPositionIndicatorSystem(this.renderer.getCamera());
+            this.engine.addSystem(entityScreenPositionIndicatorSystem);
 
             const clock = new Clock;
             const animate = () => {

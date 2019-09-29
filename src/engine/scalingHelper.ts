@@ -4,7 +4,6 @@ class LengthMeasurement {
     static readonly KM = LengthMeasurement.M * 1000;
 }
 
-console.log(LengthMeasurement.M);
 
 class SpeedMeasurement {
     static readonly gamePacing = 160.0;

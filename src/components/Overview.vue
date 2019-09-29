@@ -1,24 +1,11 @@
 <template>
-    <v-row>
-<!--        <v-col>-->
-<!--            <v-card v-if="selected.length">-->
-<!--                <v-card-title>Selected Ships</v-card-title>-->
-<!--                <v-card-text>-->
-<!--                    <ul>-->
-<!--                        <li v-for="entity in selected">-->
-<!--                            {{ entity.name }}-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </v-card-text>-->
-<!--            </v-card>-->
-<!--        </v-col>-->
-        <v-spacer/>
-        <v-spacer/>
-        <v-spacer/>
-        <v-spacer/>
-    </v-row>
-
-
+    <div>
+        <div v-for="component in indicatorComponents"
+             style="position: fixed;"
+             :style="convertScreenCoordinatesToCSSPosition(convertRelativeCoordinatesToScreenCoordinates(component.screenPosition))">
+            {{ component.name }}
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -26,44 +13,49 @@
     import {engine} from '@/engine';
     import {EngineEntityListener, Entity} from '@nova-engine/ecs';
     import {SelectableComponent} from '@/engine/components/selection/selectableComponent';
+    import {EventBus} from "@/eventBus";
+    import {Ship} from "@/engine/entities/ship";
+    import {EntityLocationIndicatorComponent} from "@/engine/components/render/entityLocationIndicatorComponent";
+    import {Vector2} from "three";
 
     @Component
     export default class Overview extends Vue {
-        protected entities: Array<Entity> = [];
+        indicatorComponents: Array<EntityLocationIndicatorComponent> = [];
 
-        // created() {
-        //     console.log('created');
-        //
-        //     engine.entities.forEach((entity: Entity) => {
-        //         this.entities.push(entity);
-        //     });
-        //     engine.addEntityListener(this);
-        //
-        // }
+        created() {
+            EventBus.$on('entity-location-indicator-added', (entity: Entity) => {
+                debugger;
+                const component = entity.getComponent(EntityLocationIndicatorComponent);
 
-        // get selectables() {
-        //     return this.entities.filter((entity: Entity) => {
-        //         return entity.hasComponent(SelectableComponent);
-        //     });
-        // }
-        //
-        // get selected() {
-        //     return this.selectables.filter((entity: Entity) => {
-        //         return entity.getComponent(SelectableComponent).isSelected();
-        //     });
-        // }
-        //
-        // onEntityAdded(entity: Entity): void {
-        //     console.log('onEntityAdded');
-        //     this.entities.push(entity);
-        // }
-        //
-        // onEntityRemoved(entity: Entity): void {
-        //     const index = this.entities.findIndex(x => x === entity);
-        //     if (index !== -1) {
-        //         this.entities.splice(index);
-        //     }
-        // }
+                this.indicatorComponents.push(component);
+            });
+
+            EventBus.$on('before-entity-location-indicator-removed', (entity: Entity) => {
+                const component = entity.getComponent(EntityLocationIndicatorComponent);
+
+                const index = this.indicatorComponents.findIndex(x => x === component);
+                if (index) {
+                    this.indicatorComponents.splice(index, 1);
+                }
+            });
+        }
+
+        public convertRelativeCoordinatesToScreenCoordinates(relative: Vector2): Vector2 {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            const halfWidth = width * 0.5;
+            const halfHeight = height * 0.5;
+
+
+            const x = (relative.x * halfWidth) + halfWidth;
+            const y = -(relative.y * halfHeight) + halfHeight;
+            return new Vector2(x, y);
+        }
+
+        public convertScreenCoordinatesToCSSPosition(screen: Vector2): string {
+            return `top: ${screen.y}px; left: ${screen.x}px;`;
+        }
 
 
     }

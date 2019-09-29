@@ -10,7 +10,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@nova-engine/ecs": "^1.1.1",
+    "@nova-engine/ecs": "github:karljacques/ecs#entity-change-listener-family",
     "core-js": "^2.6.5",
     "register-service-worker": "^1.6.2",
     "three": "^0.107.0",
