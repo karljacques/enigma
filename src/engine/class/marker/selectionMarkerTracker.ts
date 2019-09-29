@@ -4,6 +4,7 @@ import {Line2} from 'three/examples/jsm/lines/Line2';
 import {PositionComponent} from '@/engine/components/world/positionComponent';
 import {CircleGeometryFactory} from '@/engine/factories/geometry/circleGeometryFactory';
 import {SelectionMarkerRenderComponent} from '@/engine/components/render/selectionMarkerRenderComponent';
+import {LengthMeasurement} from "@/engine/scalingHelper";
 
 class SelectionMarkerTracker implements EngineEntityListener {
     protected selectionMarkerMap: Map<Entity, Entity> = new Map();
@@ -21,8 +22,8 @@ class SelectionMarkerTracker implements EngineEntityListener {
 
     public onEntitySelection(entity: Entity): void {
         if (!this.selectionMarkerMap.has(entity)) {
-            const geometry = CircleGeometryFactory.createCircleGeometry(0.75);
-            const material = LineMaterialFactory.buildDottedMaterial(0x0011ee, 10);
+            const geometry = CircleGeometryFactory.createCircleGeometry(LengthMeasurement.KM);
+            const material = LineMaterialFactory.buildDottedMaterial(0x0011ee, 1);
 
             const line = new Line2(geometry, material);
             line.computeLineDistances();

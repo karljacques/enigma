@@ -28,16 +28,16 @@
     import {UserInputSystem} from '@/engine/systems/userInputSystem';
     import {LineMaterialFactory} from '@/engine/factories/material/lineMaterialFactory';
     import {Line2} from 'three/examples/jsm/lines/Line2';
-    import {solOrbitDistances, sunRadius} from '@/engine/scalingHelper';
     import {FlightComputerComponent} from '@/engine/components/ship/flightComputerComponent';
     import {AutomatedFiringSystem} from '@/engine/systems/automatedFiringSystem';
     import {LaserHandlingSystem} from '@/engine/systems/combat/weapons/laserHandlingSystem';
     import {HealthMonitoringSystem} from '@/engine/systems/combat/healthMonitoringSystem';
     import {BackgroundSpriteFactory} from '@/engine/factories/sprite/backgroundSpriteFactory';
+    import {SolarSystemScaling} from "@/engine/scalingHelper";
 
     @Component({
-                   components: {ShaderLoader}
-               })
+        components: {ShaderLoader}
+    })
     export default class App extends Vue {
         renderer!: Renderer;
         engine!: Engine;
@@ -49,7 +49,7 @@
                 throw new Error('Could not find render element');
             }
 
-            this.engine   = engine;
+            this.engine = engine;
             this.renderer = new Renderer(element);
 
             this.engine.addSystem(this.renderer);
@@ -90,12 +90,12 @@
                 ship.getComponent(FlightComputerComponent).setTarget(new Vector3(10000, 0, 10000));
             }
 
-            (new StarFactory(this.renderer, this.engine)).createStar(sunRadius);
+            (new StarFactory(this.renderer, this.engine)).createStar(SolarSystemScaling.sunRadius);
 
             const circleFactory = new CircleGeometryFactory();
 
-            Object.values(solOrbitDistances).forEach((radius: number) => {
-                const geo      = CircleGeometryFactory.createCircleGeometry(radius, 100);
+            Object.values(SolarSystemScaling.solOrbitDistances).forEach((radius: number) => {
+                const geo = CircleGeometryFactory.createCircleGeometry(radius, 100);
                 const material = LineMaterialFactory.buildDottedMaterial(0xFFFFFF, 5);
                 this.renderer.getScene().add(new Line2(geo, material));
             });
@@ -105,9 +105,9 @@
 
             console.log(this.renderer.getRenderer().domElement);
             const entitySelectionSystem = new EntitySelectionSystem(this.renderer.getScene(),
-                                                                    this.renderer.getCamera(),
-                                                                    this.renderer.getRenderer(),
-                                                                    inputSystem);
+                this.renderer.getCamera(),
+                this.renderer.getRenderer(),
+                inputSystem);
             this.engine.addSystem(entitySelectionSystem);
             inputSystem.addEventListener(entitySelectionSystem);
 
@@ -133,7 +133,7 @@
 
             this.renderer.getStarScene().background = starBackground;
 
-            const clock   = new Clock;
+            const clock = new Clock;
             const animate = () => {
 
                 this.engine.update(clock.getDelta());

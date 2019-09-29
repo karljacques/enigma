@@ -1,7 +1,7 @@
 import {LineMaterial} from 'three/examples/jsm/lines/LineMaterial';
 
 class LineMaterialFactory {
-    public static buildDottedMaterial(colour: number, lineWidth: number, dashScale: number = 2, gapSize: number = 0.5): LineMaterial {
+    public static buildDottedMaterial(colour: number, lineWidth: number, dashScale: number = 0.5, gapSize: number = 1): LineMaterial {
         const material = new LineMaterial(
             {
                 color:     colour,

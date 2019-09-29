@@ -10,11 +10,11 @@ class SelectionMarkerRenderComponent extends RenderComponent {
         const distance = camera.position.distanceTo(this.mesh.position);
 
         if (distance < 10) {
-            this.mesh.material.linewidth = 5;
+            this.mesh.material.linewidth = 1;
         } else if (distance < 25) {
-            this.mesh.material.linewidth = 3;
+            this.mesh.material.linewidth = 1;
         } else if (distance < 50) {
-            this.mesh.material.linewidth = 2;
+            this.mesh.material.linewidth = 1;
         } else {
             this.mesh.material.linewidth = 1;
         }

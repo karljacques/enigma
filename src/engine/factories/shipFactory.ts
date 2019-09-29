@@ -11,7 +11,7 @@ import shipNames from './../entities/ship/nameList';
 import {HealthComponent} from '@/engine/components/ship/healthComponent';
 import {LoadoutComponent} from '@/engine/components/ship/LoadoutComponent';
 import {LaserWeapon} from '@/engine/class/laserWeapon';
-import {AU} from '@/engine/scalingHelper';
+import {LengthMeasurement} from '@/engine/scalingHelper';
 
 class ShipFactory {
     protected id = 1;
@@ -72,7 +72,7 @@ class ShipFactory {
         ship.mass        = 18000;
         ship.enginePower = 10000;
 
-        const geometry = new THREE.CylinderGeometry(0.25, 0.25, 1);
+        const geometry = new THREE.CylinderGeometry(125 * LengthMeasurement.M, 65* LengthMeasurement.M, 610 * LengthMeasurement.M);
 
         geometry.rotateX(Math.PI / 2);
 
@@ -85,10 +85,10 @@ class ShipFactory {
 
         const loadout = ship.putComponent(LoadoutComponent);
 
-        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        const weapon = new LaserWeapon(50, 50, 10 * LengthMeasurement.KM, 1000);
         loadout.weapons.push(weapon);
 
-        const fastLaser = new LaserWeapon(20, 50, 0.2 * AU, 500);
+        const fastLaser = new LaserWeapon(20, 50, LengthMeasurement.KM, 500);
         loadout.weapons.push(fastLaser);
     }
 
@@ -96,7 +96,8 @@ class ShipFactory {
 
         ship.mass        = 12000;
         ship.enginePower = 8000;
-        const geometry   = new THREE.BoxGeometry(0.25, 0.25, 1);
+        console.log(120 * LengthMeasurement.M);
+        const geometry   = new THREE.BoxGeometry(120 * LengthMeasurement.M, 60* LengthMeasurement.M, 600 * LengthMeasurement.M);
 
         ship.getComponent(HealthComponent).hull = 500;
 
@@ -109,7 +110,7 @@ class ShipFactory {
 
         const loadout = ship.putComponent(LoadoutComponent);
 
-        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        const weapon = new LaserWeapon(50, 50, 10 * LengthMeasurement.KM, 1000);
         loadout.weapons.push(weapon);
 
     }
@@ -119,7 +120,7 @@ class ShipFactory {
         ship.mass        = 1000;
         ship.enginePower = 1000;
 
-        const geometry = new THREE.ConeGeometry(0.1, 0.7, 32);
+        const geometry = new THREE.ConeGeometry(LengthMeasurement.M * 20, LengthMeasurement.M * 100, 32);
         geometry.rotateX(Math.PI / 2);
         const material = new THREE.MeshBasicMaterial({color: colour});
         const mesh     = new THREE.Mesh(geometry, material);
@@ -128,7 +129,7 @@ class ShipFactory {
 
         const loadout = ship.putComponent(LoadoutComponent);
 
-        const weapon = new LaserWeapon(50, 50, 0.1 * AU, 1000);
+        const weapon = new LaserWeapon(50, 50, 10 * LengthMeasurement.KM, 1000);
         loadout.weapons.push(weapon);
 
     }
