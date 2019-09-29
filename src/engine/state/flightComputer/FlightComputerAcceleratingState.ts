@@ -6,6 +6,7 @@ import {VelocityComponent} from '@/engine/components/world/velocityComponent';
 import {FlightComputerTerminatingVelocityState} from '@/engine/state/flightComputer/FlightComputerTerminatingVelocityState';
 import {RenderComponent} from '@/engine/components/render/renderComponent';
 import {Ship} from '@/engine/entities/ship';
+import {SpeedMeasurement} from "@/engine/scalingHelper";
 
 class FlightComputerAcceleratingState implements FlightComputerState {
     public onEnter(entity: Ship): void {
@@ -13,7 +14,7 @@ class FlightComputerAcceleratingState implements FlightComputerState {
         const target   = entity.getComponent(FlightComputerComponent).getTarget();
         const position = entity.getComponent(PositionComponent).getPosition();
 
-        const acceleration = entity.enginePower / entity.mass;
+        const acceleration = (entity.enginePower / entity.mass) * SpeedMeasurement.gamePacing;
         const thrustVector = target.sub(position).normalize().multiplyScalar(acceleration);
 
         entity.getComponent(VelocityComponent).setAcceleration(thrustVector);
@@ -31,7 +32,7 @@ class FlightComputerAcceleratingState implements FlightComputerState {
 
         const displacement                 = target.distanceTo(position);
 
-        const acceleration = entity.enginePower / entity.mass;
+        const acceleration = (entity.enginePower / entity.mass) * SpeedMeasurement.gamePacing;
 
         const maxThrustInOppositeDirection = (target.sub(position)).normalize().multiplyScalar(acceleration);
 
