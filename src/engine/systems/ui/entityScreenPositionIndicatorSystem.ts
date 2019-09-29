@@ -27,8 +27,7 @@ class EntityScreenPositionIndicatorSystem extends System {
                 vector.setFromMatrixPosition(entity.getComponent(RenderComponent).getMesh().matrixWorld);
                 vector.project(this.camera);
 
-                // const onScreen = (vector.x < 1.0 && vector.x > -1.0 && vector.y < 1.0 && vector.y > -1.0);
-                const onScreen = true;
+                const onScreen = (vector.x < 1.0 && vector.x > -1.0 && vector.y < 1.0 && vector.y > -1.0 && vector.z < 1.0);
                 let hasIndicator = entity.hasComponent(EntityLocationIndicatorComponent);
 
                 if (hasIndicator) {
