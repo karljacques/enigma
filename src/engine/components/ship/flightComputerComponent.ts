@@ -4,6 +4,7 @@ import {FlightComputerState} from '@/engine/state/flightComputer/FlightComputerS
 import {FlightComputerTerminatingVelocityState} from '@/engine/state/flightComputer/FlightComputerTerminatingVelocityState';
 
 class FlightComputerComponent implements Component {
+    public static tag = 'FlightComputerComponent';
 
     protected target: Vector3 | null = null;
     protected entity!: Entity;

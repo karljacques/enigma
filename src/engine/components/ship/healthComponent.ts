@@ -1,6 +1,8 @@
 import {Component} from '@nova-engine/ecs';
 
 class HealthComponent implements Component {
+    public static tag = 'HealthComponent';
+
     private _hull: number    = 100;
     private _shields: number = 100;
 
